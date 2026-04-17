@@ -81,31 +81,52 @@ function InvitationPage() {
     }
   }, [youtubeId])
 
-  const handleOpen = () => {
-    setIsOpen(true)
-    setIsPlaying(true)
+  const toggleMusic = (forcePlay = null) => {
+    const shouldPlay = forcePlay !== null ? forcePlay : !isPlaying
+    
     if (youtubeId && ytPlayer) {
-      ytPlayer.playVideo()
+      if (shouldPlay) ytPlayer.playVideo()
+      else ytPlayer.pauseVideo()
     } else if (audioRef.current) {
-      audioRef.current.play().catch(e => console.log("Audio play failed:", e))
+      if (shouldPlay) audioRef.current.play().catch(e => console.log("Blocked:", e))
+      else audioRef.current.pause()
     }
+    
+    setIsPlaying(shouldPlay)
   }
 
-  const toggleMusic = () => {
-    if (isPlaying) {
-      if (youtubeId && ytPlayer) {
-        ytPlayer.pauseVideo()
-      } else if (audioRef.current) {
-        audioRef.current.pause()
-      }
-    } else {
-      if (youtubeId && ytPlayer) {
-        ytPlayer.playVideo()
-      } else if (audioRef.current) {
-        audioRef.current.play()
+  // Auto-play attempt & Global click trigger
+  useEffect(() => {
+    const startMusic = () => {
+      if (!isPlaying) {
+        toggleMusic(true)
       }
     }
-    setIsPlaying(!isPlaying)
+
+    // Try playing on data load
+    if (weddingData && (ytPlayer || audioRef.current)) {
+      startMusic()
+    }
+
+    // Global listener for first interaction
+    const handleFirstInteraction = () => {
+      startMusic()
+      document.removeEventListener('click', handleFirstInteraction)
+      document.removeEventListener('touchstart', handleFirstInteraction)
+    }
+
+    document.addEventListener('click', handleFirstInteraction)
+    document.addEventListener('touchstart', handleFirstInteraction)
+
+    return () => {
+      document.removeEventListener('click', handleFirstInteraction)
+      document.removeEventListener('touchstart', handleFirstInteraction)
+    }
+  }, [weddingData, ytPlayer, isPlaying])
+
+  const handleOpen = () => {
+    setIsOpen(true)
+    if (!isPlaying) toggleMusic(true)
   }
 
   if (loading) {

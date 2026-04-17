@@ -443,7 +443,12 @@ const AdminPage = () => {
                         onChange={(e) => setConfig({...config, template: e.target.value})}
                         className="template-select"
                       >
+                        <option value="classic">Classic Premium</option>
+                        <option value="modern">Modern Royal</option>
+                        <option value="nature">Nature Forest</option>
+                        <option value="romantic">Romantic Pink</option>
                         <option value="vintage">Vintage (Antique)</option>
+                        <option value="official">Resmi (Official)</option>
                       </select>
                     </div>
                     <div className="form-group">
@@ -457,6 +462,7 @@ const AdminPage = () => {
                         <option value="elegant">Elegant (Display Serif)</option>
                         <option value="romantic">Romantic (Handwritten)</option>
                         <option value="vintage">Vintage (Antique Garamond)</option>
+                        <option value="official">Official (Clean Inter)</option>
                       </select>
                     </div>
                     <div className="form-group">
