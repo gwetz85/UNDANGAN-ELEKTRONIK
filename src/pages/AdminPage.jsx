@@ -313,7 +313,8 @@ const AdminPage = () => {
               </div>
             </div>
           </div>
-        )}
+        )
+      )}
       </main>
 
       <style>{`

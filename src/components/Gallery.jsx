@@ -6,7 +6,6 @@ import g4 from '../assets/g4.png'
 import couple from '../assets/couple.png'
 import bg from '../assets/bg.png'
 
-const Gallery = () => {
 const Gallery = ({ photos = [] }) => {
   const defaultPhotos = [
     g1,
