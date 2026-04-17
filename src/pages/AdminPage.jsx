@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { Users, MessageSquare, Plus, Trash2, Copy, Check, LogOut, ExternalLink, ChevronLeft, LayoutDashboard } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Users, MessageSquare, Plus, Trash2, Copy, Check, LogOut, ExternalLink, ChevronLeft, LayoutDashboard, Settings, Save, X } from 'lucide-react'
 import { useNavigate, useParams, Link } from 'react-router-dom'
 import { db } from '../firebase'
-import { ref, push, onValue, remove, serverTimestamp, query, orderByChild } from 'firebase/database'
+import { ref, push, onValue, remove, set, serverTimestamp, query, orderByChild } from 'firebase/database'
 
 const AdminPage = () => {
   const navigate = useNavigate()
@@ -14,10 +14,24 @@ const AdminPage = () => {
   const [rsvps, setRsvps] = useState([])
   const [newGuestName, setNewGuestName] = useState('')
   const [copiedIndex, setCopiedIndex] = useState(null)
+  
+  // Settings & Creation State
+  const [showCreateModal, setShowCreateModal] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+  const [newWedding, setNewWedding] = useState({ slug: '', coupleNames: '' })
+  const [config, setConfig] = useState({
+    coupleNames: '',
+    weddingDate: '',
+    musicUrl: '',
+    coverImage: '',
+    hero: { title: '', description: '', image: '' },
+    events: [],
+    bankAccounts: [],
+    gallery: []
+  })
 
   useEffect(() => {
     if (!weddingSlug) {
-      // Fetch all weddings for the global dashboard
       const weddingsRef = ref(db, 'weddings')
       const unsub = onValue(weddingsRef, (snapshot) => {
         const data = snapshot.val()
@@ -35,7 +49,21 @@ const AdminPage = () => {
       return () => unsub()
     }
 
-    // Listen to Guests for a specific wedding
+    // Fetch Config for specific wedding
+    const configRef = ref(db, `weddings/${weddingSlug}/config`)
+    const unsubConfig = onValue(configRef, (snapshot) => {
+      const data = snapshot.val()
+      if (data) {
+        setConfig({
+          ...config,
+          ...data,
+          events: data.events || [],
+          bankAccounts: data.bankAccounts || [],
+          gallery: data.gallery || []
+        })
+      }
+    })
+
     const guestRef = query(ref(db, `weddings/${weddingSlug}/guests`), orderByChild('createdAt'))
     const unsubGuests = onValue(guestRef, (snapshot) => {
       const data = snapshot.val()
@@ -46,7 +74,6 @@ const AdminPage = () => {
       }
     })
 
-    // Listen to RSVPs for a specific wedding
     const rsvpRef = query(ref(db, `weddings/${weddingSlug}/rsvps`), orderByChild('createdAt'))
     const unsubRsvps = onValue(rsvpRef, (snapshot) => {
       const data = snapshot.val()
@@ -58,6 +85,7 @@ const AdminPage = () => {
     })
 
     return () => {
+      unsubConfig()
       unsubGuests()
       unsubRsvps()
     }
@@ -66,6 +94,50 @@ const AdminPage = () => {
   const handleLogout = () => {
     localStorage.removeItem('admin_authenticated')
     navigate('/login')
+  }
+
+  const handleCreateWedding = async (e) => {
+    e.preventDefault()
+    if (!newWedding.slug || !newWedding.coupleNames) return
+    const slug = newWedding.slug.toLowerCase().replace(/\s+/g, '-')
+    
+    setIsSaving(true)
+    try {
+      await set(ref(db, `weddings/${slug}/config`), {
+        coupleNames: newWedding.coupleNames,
+        weddingDate: new Date().toISOString().split('T')[0] + 'T09:00:00',
+        hero: { title: 'MAHA SUCI ALLAH', description: 'Atas izin-Mu, kami mengundang Anda untuk merayakan hari bahagia kami.' }
+      })
+      setShowCreateModal(false)
+      setNewWedding({ slug: '', coupleNames: '' })
+      navigate(`/admin/${slug}`)
+    } catch (error) {
+      alert("Gagal membuat undangan: " + error.message)
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  const handleDeleteWedding = async (slug) => {
+    if (window.confirm(`Hapus seluruh data undangan "${slug}"? Tindakan ini tidak dapat dibatalkan.`)) {
+      try {
+        await remove(ref(db, `weddings/${slug}`))
+      } catch (error) {
+        alert("Gagal menghapus: " + error.message)
+      }
+    }
+  }
+
+  const handleSaveConfig = async () => {
+    setIsSaving(true)
+    try {
+      await set(ref(db, `weddings/${weddingSlug}/config`), config)
+      alert("Pengaturan berhasil disimpan!")
+    } catch (error) {
+      alert("Gagal menyimpan: " + error.message)
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   const addGuest = async (e) => {
@@ -100,6 +172,45 @@ const AdminPage = () => {
     setTimeout(() => setCopiedIndex(null), 2000)
   }
 
+  // Dynamic List Handlers
+  const addEvent = () => {
+    setConfig({
+      ...config,
+      events: [...config.events, { title: '', date: '', time: '', location: '', mapUrl: '' }]
+    })
+  }
+
+  const removeEvent = (index) => {
+    const newEvents = [...config.events]
+    newEvents.splice(index, 1)
+    setConfig({ ...config, events: newEvents })
+  }
+
+  const updateEvent = (index, field, value) => {
+    const newEvents = [...config.events]
+    newEvents[index][field] = value
+    setConfig({ ...config, events: newEvents })
+  }
+
+  const addBankAccount = () => {
+    setConfig({
+      ...config,
+      bankAccounts: [...config.bankAccounts, { bank: '', name: '', number: '' }]
+    })
+  }
+
+  const removeBankAccount = (index) => {
+    const newBanks = [...config.bankAccounts]
+    newBanks.splice(index, 1)
+    setConfig({ ...config, bankAccounts: newBanks })
+  }
+
+  const updateBankAccount = (index, field, value) => {
+    const newBanks = [...config.bankAccounts]
+    newBanks[index][field] = value
+    setConfig({ ...config, bankAccounts: newBanks })
+  }
+
   const stats = {
     totalGuests: guests.length,
     totalRSVP: rsvps.length,
@@ -116,7 +227,7 @@ const AdminPage = () => {
         <nav>
           <button 
             className={!weddingSlug ? 'active' : ''} 
-            onClick={() => navigate('/admin')}
+            onClick={() => { navigate('/admin'); setActiveTab('guests'); }}
           >
             <LayoutDashboard size={20} /> Semua Undangan
           </button>
@@ -124,6 +235,12 @@ const AdminPage = () => {
           {weddingSlug && (
             <>
               <div className="sidebar-divider">Kelola: {weddingSlug}</div>
+              <button 
+                className={activeTab === 'settings' ? 'active' : ''} 
+                onClick={() => setActiveTab('settings')}
+              >
+                <Settings size={20} /> Pengaturan Undangan
+              </button>
               <button 
                 className={activeTab === 'guests' ? 'active' : ''} 
                 onClick={() => setActiveTab('guests')}
@@ -148,9 +265,12 @@ const AdminPage = () => {
         <header className="main-header">
           {weddingSlug ? (
             <div className="header-top">
-              <button className="back-link" onClick={() => navigate('/admin')}>
-                <ChevronLeft size={20} /> Kembali ke Daftar
-              </button>
+              <div className="header-nav">
+                <button className="back-link" onClick={() => navigate('/admin')}>
+                  <ChevronLeft size={20} /> Kembali
+                </button>
+                <h1>{config.coupleNames || weddingSlug}</h1>
+              </div>
               <div className="stats-grid">
                 <div className="stat-card glass">
                   <span>Total Tamu</span>
@@ -167,7 +287,12 @@ const AdminPage = () => {
               </div>
             </div>
           ) : (
-            <h1>Semua Undangan Aktif</h1>
+            <div className="header-flex">
+              <h1>Semua Undangan Aktif</h1>
+              <button className="btn-premium" onClick={() => setShowCreateModal(true)}>
+                <Plus size={18} /> Tambah Undangan
+              </button>
+            </div>
           )}
         </header>
 
@@ -175,20 +300,26 @@ const AdminPage = () => {
           <div className="wedding-list">
             {weddings.length === 0 ? (
               <div className="card glass empty-state">
-                <p>Belum ada undangan yang dibuat di database.</p>
-                <p className="hint">Silakan tambahkan data di Firebase Console bawah node <code>weddings/</code></p>
+                <p>Belum ada undangan yang dibuat.</p>
+                <button className="btn-secondary" onClick={() => setShowCreateModal(true)}>Buat Undangan Pertama</button>
               </div>
             ) : (
               <div className="wedding-grid">
                 {weddings.map(w => (
                   <div key={w.slug} className="card glass wedding-card">
-                    <h3>{w.coupleNames}</h3>
+                    <div className="card-top">
+                      <h3>{w.coupleNames}</h3>
+                      <button className="delete-icon-btn" onClick={() => handleDeleteWedding(w.slug)}>
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                     <div className="wedding-stats">
                       <span>{w.guestCount} Tamu</span>
                       <span>{w.rsvpCount} RSVP</span>
                     </div>
+                    <code className="slug-badge">/{w.slug}</code>
                     <div className="wedding-actions">
-                      <button className="btn-secondary" onClick={() => navigate(`/admin/${w.slug}`)}>
+                      <button className="btn-secondary" onClick={() => { navigate(`/admin/${w.slug}`); setActiveTab('guests'); }}>
                         Kelola
                       </button>
                       <a href={`/${w.slug}`} target="_blank" rel="noreferrer" className="btn-icon">
@@ -201,7 +332,161 @@ const AdminPage = () => {
             )}
           </div>
         ) : (
-          activeTab === 'guests' ? (
+          activeTab === 'settings' ? (
+            <div className="tab-content">
+              <div className="settings-grid">
+                {/* General Settings */}
+                <div className="card glass">
+                  <div className="card-header">
+                    <h3>Informasi Umum</h3>
+                  </div>
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label>Nama Pasangan</label>
+                      <input 
+                        type="text" 
+                        value={config.coupleNames} 
+                        onChange={(e) => setConfig({...config, coupleNames: e.target.value})}
+                        placeholder="Contoh: Romeo & Juliet"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Tanggal Pernikahan</label>
+                      <input 
+                        type="datetime-local" 
+                        value={config.weddingDate} 
+                        onChange={(e) => setConfig({...config, weddingDate: e.target.value})}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>URL Musik (MP3)</label>
+                      <input 
+                        type="text" 
+                        value={config.musicUrl} 
+                        onChange={(e) => setConfig({...config, musicUrl: e.target.value})}
+                        placeholder="https://example.com/music.mp3"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Cover Image URL</label>
+                      <input 
+                        type="text" 
+                        value={config.coverImage} 
+                        onChange={(e) => setConfig({...config, coverImage: e.target.value})}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Hero Settings */}
+                <div className="card glass">
+                  <div className="card-header">
+                    <h3>Tampilan Hero (Awal)</h3>
+                  </div>
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label>Judul Hero</label>
+                      <input 
+                        type="text" 
+                        value={config.hero.title} 
+                        onChange={(e) => setConfig({...config, hero: {...config.hero, title: e.target.value}})}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Deskripsi Hero</label>
+                      <textarea 
+                        value={config.hero.description} 
+                        onChange={(e) => setConfig({...config, hero: {...config.hero, description: e.target.value}})}
+                        rows="2"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Gambar Hero URL</label>
+                      <input 
+                        type="text" 
+                        value={config.hero.image} 
+                        onChange={(e) => setConfig({...config, hero: {...config.hero, image: e.target.value}})}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Events Settings */}
+                <div className="card glass">
+                  <div className="card-header flex-header">
+                    <h3>Acara Pernikahan</h3>
+                    <button className="btn-icon-text" onClick={addEvent}>
+                      <Plus size={16} /> Tambah Acara
+                    </button>
+                  </div>
+                  <div className="dynamic-list">
+                    {config.events.map((event, idx) => (
+                      <div key={idx} className="dynamic-item glass">
+                        <div className="item-header">
+                          <h4>Acara #{idx + 1}</h4>
+                          <button className="text-danger" onClick={() => removeEvent(idx)}><Trash2 size={16} /></button>
+                        </div>
+                        <div className="form-grid">
+                          <input placeholder="Nama Acara (Akad Nikah)" value={event.title} onChange={(e) => updateEvent(idx, 'title', e.target.value)} />
+                          <input placeholder="Tanggal (Minggu, 12 Jan 2026)" value={event.date} onChange={(e) => updateEvent(idx, 'date', e.target.value)} />
+                          <input placeholder="Waktu (09:00 - Selesai)" value={event.time} onChange={(e) => updateEvent(idx, 'time', e.target.value)} />
+                          <input placeholder="Lokasi" value={event.location} onChange={(e) => updateEvent(idx, 'location', e.target.value)} />
+                          <input placeholder="Google Maps URL" value={event.mapUrl} onChange={(e) => updateEvent(idx, 'mapUrl', e.target.value)} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Gift Settings */}
+                <div className="card glass">
+                  <div className="card-header flex-header">
+                    <h3>Hadiah Digital / Bank</h3>
+                    <button className="btn-icon-text" onClick={addBankAccount}>
+                      <Plus size={16} /> Tambah Rekening
+                    </button>
+                  </div>
+                  <div className="dynamic-list">
+                    {config.bankAccounts.map((acc, idx) => (
+                      <div key={idx} className="dynamic-item glass">
+                        <div className="item-header">
+                          <h4>Rekening #{idx + 1}</h4>
+                          <button className="text-danger" onClick={() => removeBankAccount(idx)}><Trash2 size={16} /></button>
+                        </div>
+                        <div className="form-grid">
+                          <input placeholder="Nama Bank" value={acc.bank} onChange={(e) => updateBankAccount(idx, 'bank', e.target.value)} />
+                          <input placeholder="Nama Pemilik" value={acc.name} onChange={(e) => updateBankAccount(idx, 'name', e.target.value)} />
+                          <input placeholder="Nomor Rekening" value={acc.number} onChange={(e) => updateBankAccount(idx, 'number', e.target.value)} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Gallery Settings */}
+                <div className="card glass">
+                  <div className="card-header">
+                    <h3>Galeri Foto</h3>
+                  </div>
+                  <div className="form-group">
+                    <label>URL Foto (Satu URL per baris)</label>
+                    <textarea 
+                      value={config.gallery.join('\n')} 
+                      onChange={(e) => setConfig({...config, gallery: e.target.value.split('\n').filter(url => url.trim() !== '')})}
+                      placeholder="https://example.com/photo1.jpg"
+                      rows="5"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="sticky-actions">
+                <button className="btn-premium big-btn" onClick={handleSaveConfig} disabled={isSaving}>
+                  <Save size={20} /> {isSaving ? 'Menyimpan...' : 'Simpan Semua Perubahan'}
+                </button>
+              </div>
+            </div>
+          ) : activeTab === 'guests' ? (
           <div className="tab-content">
             <div className="card glass">
               <div className="card-header">
@@ -317,6 +602,59 @@ const AdminPage = () => {
       )}
       </main>
 
+      {/* Create Wedding Modal */}
+      <AnimatePresence>
+        {showCreateModal && (
+          <motion.div 
+            className="modal-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div 
+              className="modal-card glass"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+            >
+              <div className="modal-header">
+                <h3>Buat Undangan Baru</h3>
+                <button onClick={() => setShowCreateModal(false)}><X size={20} /></button>
+              </div>
+              <form onSubmit={handleCreateWedding}>
+                <div className="form-group">
+                  <label>Slug URL (Contoh: budi-santi)</label>
+                  <input 
+                    type="text" 
+                    placeholder="budi-santi"
+                    value={newWedding.slug}
+                    onChange={(e) => setNewWedding({...newWedding, slug: e.target.value})}
+                    required
+                  />
+                  <small>Link akan menjadi: <code>your-site.com/{newWedding.slug || 'slug'}</code></small>
+                </div>
+                <div className="form-group">
+                  <label>Nama Pasangan</label>
+                  <input 
+                    type="text" 
+                    placeholder="Budi & Santi"
+                    value={newWedding.coupleNames}
+                    onChange={(e) => setNewWedding({...newWedding, coupleNames: e.target.value})}
+                    required
+                  />
+                </div>
+                <div className="modal-actions">
+                  <button type="button" className="btn-secondary" onClick={() => setShowCreateModal(false)}>Batal</button>
+                  <button type="submit" className="btn-premium" disabled={isSaving}>
+                    {isSaving ? 'Memproses...' : 'Buat Undangan'}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <style>{`
         .admin-container {
           display: flex;
@@ -333,6 +671,7 @@ const AdminPage = () => {
           flex-direction: column;
           position: fixed;
           height: 100vh;
+          z-index: 100;
         }
         .sidebar-header { margin-bottom: 50px; }
         .sidebar-header h2 { font-family: var(--font-heading); color: var(--primary-light); }
@@ -344,7 +683,7 @@ const AdminPage = () => {
           margin: 20px 0 10px 15px;
           opacity: 0.5;
         }
-        nav { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+        nav { flex: 1; display: flex; flex-direction: column; gap: 5px; }
         nav button {
           background: transparent;
           border: none;
@@ -373,13 +712,16 @@ const AdminPage = () => {
           justify-content: center;
           gap: 10px;
         }
-        .main-content { margin-left: 280px; flex: 1; padding: 40px; }
+        .main-content { margin-left: 280px; flex: 1; padding: 40px; padding-bottom: 100px; }
         .main-header { margin-bottom: 40px; }
-        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .header-flex { display: flex; justify-content: space-between; align-items: center; }
+        .header-nav { display: flex; align-items: center; gap: 20px; }
+        .header-nav h1 { font-size: 2rem; color: var(--secondary); margin: 0; }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 25px; }
         .stat-card { padding: 25px; border-radius: 20px; text-align: center; }
         .stat-card span { font-size: 0.8rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; }
         .stat-card h3 { font-size: 2rem; color: var(--secondary); margin-top: 5px; }
-        .header-top { display: flex; flex-direction: column; gap: 20px; }
+        .header-top { display: flex; flex-direction: column; gap: 10px; }
         .back-link {
           display: flex;
           align-items: center;
@@ -389,83 +731,137 @@ const AdminPage = () => {
           border: none;
           cursor: pointer;
           font-weight: 600;
-          width: fit-content;
+          font-size: 1rem;
         }
         .wedding-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-          gap: 20px;
+          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+          gap: 25px;
         }
         .wedding-card {
           display: flex;
           flex-direction: column;
           gap: 15px;
+          position: relative;
         }
-        .wedding-card h3 { color: var(--secondary); margin: 0; }
+        .card-top { display: flex; justify-content: space-between; align-items: flex-start; }
+        .wedding-card h3 { color: var(--secondary); margin: 0; font-size: 1.3rem; }
+        .delete-icon-btn { color: #feb2b2; background: none; border: none; cursor: pointer; padding: 5px; }
+        .delete-icon-btn:hover { color: #f56565; }
         .wedding-stats { display: flex; gap: 15px; font-size: 0.85rem; color: var(--text-light); }
-        .wedding-actions { display: flex; gap: 10px; border-top: 1px solid #f7fafc; pt: 15px; margin-top: 5px;}
+        .slug-badge { background: #edf2f7; color: var(--primary); padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; width: fit-content; }
+        .wedding-actions { display: flex; gap: 10px; border-top: 1px solid #f7fafc; pt: 15px; margin-top: 5px; padding-top: 15px;}
         .btn-secondary {
           flex: 1;
-          padding: 8px;
-          border-radius: 8px;
+          padding: 10px;
+          border-radius: 10px;
           border: 1px solid var(--primary);
           background: white;
           color: var(--primary);
           font-weight: 600;
           cursor: pointer;
         }
+        .btn-icon-text {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          background: var(--primary-light);
+          color: white;
+          border: none;
+          padding: 8px 15px;
+          border-radius: 8px;
+          font-size: 0.85rem;
+          cursor: pointer;
+          font-weight: 600;
+        }
         .btn-icon {
-          width: 36px;
-          height: 36px;
+          width: 40px;
+          height: 40px;
           display: flex;
           align-items: center;
           justify-content: center;
-          border-radius: 8px;
+          border-radius: 10px;
           background: #f7fafc;
           color: var(--text-light);
         }
-        .empty-state { text-align: center; padding: 60px !important; }
-        .hint { font-size: 0.85rem; opacity: 0.6; margin-top: 10px; }
-        .card { background: white; border-radius: 20px; padding: 30px; margin-bottom: 30px; border: 1px solid rgba(0,0,0,0.05); }
+        .empty-state { text-align: center; padding: 80px !important; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        .card { background: white; border-radius: 20px; padding: 30px; margin-bottom: 30px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.01); }
         .card-header { margin-bottom: 25px; }
-        .card-header h3 { color: var(--secondary); font-size: 1.2rem; }
-        .add-guest-form { display: flex; gap: 15px; }
-        .add-guest-form input {
-          flex: 1;
-          padding: 12px 20px;
+        .card-header h3 { color: var(--secondary); font-size: 1.25rem; font-family: var(--font-heading); }
+        .flex-header { display: flex; justify-content: space-between; align-items: center; }
+        
+        /* Form Styles */
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .form-group label { font-size: 0.85rem; font-weight: 600; color: var(--text-dark); }
+        .form-group input, .form-group textarea, .form-group select {
+          padding: 12px 15px;
           border: 1px solid #e2e8f0;
-          border-radius: 15px;
+          border-radius: 12px;
+          font-family: inherit;
           outline: none;
+          transition: border-color 0.2s;
         }
+        .form-group input:focus { border-color: var(--primary); }
+        .form-group small { font-size: 0.75rem; color: var(--text-light); }
+        
+        /* Dynamic List Styles */
+        .dynamic-list { display: flex; flex-direction: column; gap: 15px; }
+        .dynamic-item { padding: 20px; border-radius: 15px; border: 1px solid #edf2f7; }
+        .item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .item-header h4 { color: var(--primary); margin: 0; }
+        .text-danger { color: #e53e3e; background: none; border: none; cursor: pointer; }
+        
+        /* Sticky Actions */
+        .sticky-actions {
+          position: fixed;
+          bottom: 30px;
+          right: 40px;
+          left: 320px;
+          display: flex;
+          justify-content: flex-end;
+          z-index: 90;
+        }
+        .big-btn { padding: 18px 40px; font-size: 1.1rem; box-shadow: 0 10px 15px -3px rgba(184, 134, 11, 0.3); }
+
+        /* Modal Styles */
+        .modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0,0,0,0.5);
+          backdrop-filter: blur(4px);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 1000;
+        }
+        .modal-card { background: white; width: 90%; max-width: 500px; padding: 40px; border-radius: 25px; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .modal-header h3 { font-size: 1.5rem; color: var(--secondary); margin: 0; }
+        .modal-header button { background: none; border: none; cursor: pointer; color: var(--text-light); }
+        .modal-actions { display: flex; gap: 15px; margin-top: 30px; }
+        
+        .add-guest-form { display: flex; gap: 15px; }
+        .add-guest-form input { flex: 1; }
+        
+        /* Tables */
         .table-responsive { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; text-align: left; }
         th { padding: 15px; border-bottom: 2px solid #f7fafc; color: var(--text-light); font-weight: 600; font-size: 0.85rem; }
         td { padding: 15px; border-bottom: 1px solid #f7fafc; color: var(--text-dark); font-size: 0.9rem; }
-        .link-cell { display: flex; align-items: center; gap: 10px; }
-        .guest-link { background: #f7fafc; padding: 5px 10px; border-radius: 5px; color: var(--primary); font-size: 0.8rem; font-family: monospace; }
-        .icon-btn {
-          background: #f7fafc;
-          border: none;
-          width: 34px;
-          height: 34px;
-          border-radius: 8px;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: all 0.2s;
-        }
-        .icon-btn:hover { background: #edf2f7; transform: scale(1.1); }
-        .delete-btn { color: #e53e3e; }
         .status-tag { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
         .status-tag.hadir { background: #c6f6d5; color: #22543d; }
         .status-tag.tidak-hadir { background: #fed7d7; color: #822727; }
         .status-tag.masih-ragu { background: #feebc8; color: #7b341e; }
-        .message-cell { font-style: italic; opacity: 0.8; }
+        
         @media (max-width: 1024px) {
           .sidebar { width: 80px; padding: 20px 10px; }
-          .sidebar-header h2, .sidebar-header p, nav button span { display: none; }
+          .sidebar-header h2, .sidebar-header p, nav button span, .sidebar-divider { display: none; }
           .main-content { margin-left: 80px; padding: 20px; }
+          .sticky-actions { left: 100px; }
           .stats-grid { grid-template-columns: 1fr; }
         }
       `}</style>
@@ -474,3 +870,4 @@ const AdminPage = () => {
 }
 
 export default AdminPage
+
