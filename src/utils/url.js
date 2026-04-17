@@ -4,7 +4,7 @@ export const getDirectImageUrl = (url) => {
   // Handle Google Drive Links
   if (url.includes('drive.google.com')) {
     const id = url.split('/d/')[1]?.split('/')[0] || url.split('id=')[1]?.split('&')[0]
-    if (id) return `https://drive.google.com/uc?export=view&id=${id}`
+    if (id) return `https://lh3.googleusercontent.com/d/${id}`
   }
   
   // Handle Dropbox Links
