@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Play, Pause, Loader2 } from 'lucide-react'
+import { Play, Pause, Loader2, Volume2, VolumeX } from 'lucide-react'
 import { useParams, Link } from 'react-router-dom'
 import { db } from '../firebase'
 import { ref, onValue } from 'firebase/database'
@@ -228,6 +228,9 @@ function InvitationPage() {
             exit={exitVariants[template] || exitVariants.classic}
             style={{ backgroundImage: `url(${getDirectImageUrl(config.coverImage) || preset.bg})` }}
           >
+            <div className="cover-music-hint" onClick={() => toggleMusic(true)}>
+              {isPlaying ? <Volume2 size={24} className="pulse-icon" /> : <VolumeX size={24} />}
+            </div>
             <div className="cover-content">
               <motion.h4
                 initial={{ opacity: 0, y: 20 }}
@@ -368,6 +371,30 @@ function InvitationPage() {
           justify-content: center;
           color: var(--primary);
           cursor: pointer;
+        }
+        .cover-music-hint {
+          position: absolute;
+          top: 30px;
+          right: 30px;
+          width: 45px;
+          height: 45px;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.4);
+          backdrop-filter: blur(5px);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: var(--primary);
+          cursor: pointer;
+          z-index: 1010;
+          border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .pulse-icon {
+          animation: pulse-icon 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse-icon {
+          0%, 100% { transform: scale(1); opacity: 0.8; }
+          50% { transform: scale(1.2); opacity: 1; }
         }
         .audio-visualizer {
           display: flex;
