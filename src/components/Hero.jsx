@@ -3,10 +3,26 @@ import coupleImg from '../assets/couple.png'
 
 const Hero = ({ data = {}, type = 'wedding' }) => {
   const defaults = {
-    wedding: { title: 'MAHA SUCI ALLAH', desc: 'Atas izin-Mu, kami mengundang Anda untuk merayakan hari bahagia kami.' },
-    birthday: { title: 'HAPPY BIRTHDAY', desc: 'Terima kasih telah menemani perjalanan hidup saya hingga saat ini.' },
-    meeting: { title: 'OFFICIAL MEETING', desc: 'Sinergi dan kolaborasi untuk mencapai tujuan bersama.' },
-    event: { title: 'SPECIAL EVENT', desc: 'Mari bergabung dan rayakan momen spesial ini bersama kami.' }
+    wedding: { 
+      title: 'MAHA SUCI ALLAH', 
+      desc: 'Atas izin-Mu, kami mengundang Anda untuk merayakan hari bahagia kami.',
+      image: coupleImg
+    },
+    birthday: { 
+      title: 'HAPPY BIRTHDAY', 
+      desc: 'Terima kasih telah menemani perjalanan hidup saya hingga saat ini.',
+      image: 'https://images.unsplash.com/photo-1530103862676-fa8c9d3433b9?q=80&w=2070&auto=format&fit=crop'
+    },
+    meeting: { 
+      title: 'OFFICIAL MEETING', 
+      desc: 'Sinergi dan kolaborasi untuk mencapai tujuan bersama.',
+      image: 'https://images.unsplash.com/photo-1431540015161-0bf868a2d407?q=80&w=2070&auto=format&fit=crop'
+    },
+    event: { 
+      title: 'SPECIAL EVENT', 
+      desc: 'Mari bergabung dan rayakan momen spesial ini bersama kami.',
+      image: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=2070&auto=format&fit=crop'
+    }
   }
   const current = defaults[type] || defaults.wedding
 
@@ -18,7 +34,7 @@ const Hero = ({ data = {}, type = 'wedding' }) => {
           initial={{ scale: 1.2, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 2, ease: "easeOut" }}
-          style={{ backgroundImage: `url(${data.image || coupleImg})` }}
+          style={{ backgroundImage: `url(${data.image || current.image})` }}
         />
         <div className="hero-overlay"></div>
       </div>

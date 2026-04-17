@@ -81,10 +81,26 @@ function InvitationPage() {
   const eventType = config.type || 'wedding'
 
   const TYPE_PRESETS = {
-    wedding: { coverTitle: 'THE WEDDING OF', guestPrefix: 'Kepada Bapak/Ibu/Saudara/i:' },
-    birthday: { coverTitle: 'HAPPY BIRTHDAY', guestPrefix: 'Special Invite for:' },
-    meeting: { coverTitle: 'OFFICIAL MEETING', guestPrefix: 'Kepada Yth. Rekan:' },
-    event: { coverTitle: 'SPECIAL EVENT', guestPrefix: 'Invitation for:' }
+    wedding: { 
+      coverTitle: 'THE WEDDING OF', 
+      guestPrefix: 'Kepada Bapak/Ibu/Saudara/i:', 
+      bg: bgImage 
+    },
+    birthday: { 
+      coverTitle: 'HAPPY BIRTHDAY', 
+      guestPrefix: 'Special Invite for:', 
+      bg: 'https://images.unsplash.com/photo-1530103862676-fa8c9d3433b9?q=80&w=2070&auto=format&fit=crop' 
+    },
+    meeting: { 
+      coverTitle: 'OFFICIAL MEETING', 
+      guestPrefix: 'Kepada Yth. Rekan:', 
+      bg: 'https://images.unsplash.com/photo-1431540015161-0bf868a2d407?q=80&w=2070&auto=format&fit=crop' 
+    },
+    event: { 
+      coverTitle: 'SPECIAL EVENT', 
+      guestPrefix: 'Invitation for:', 
+      bg: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=2070&auto=format&fit=crop' 
+    }
   }
 
   const preset = TYPE_PRESETS[eventType] || TYPE_PRESETS.wedding
@@ -126,7 +142,7 @@ function InvitationPage() {
             className="cover-overlay"
             initial={{ opacity: 1 }}
             exit={exitVariants[template] || exitVariants.classic}
-            style={{ backgroundImage: `url(${config.coverImage || bgImage})` }}
+            style={{ backgroundImage: `url(${config.coverImage || preset.bg})` }}
           >
             <div className="cover-content">
               <motion.h4
