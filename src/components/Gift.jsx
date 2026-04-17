@@ -2,7 +2,15 @@ import { motion } from 'framer-motion'
 import { Copy, Check, CreditCard, Gift as GiftIcon } from 'lucide-react'
 import { useState } from 'react'
 
-const Gift = ({ accounts = [] }) => {
+const Gift = ({ accounts = [], type = 'wedding' }) => {
+  const labels = {
+    wedding: { title: 'Kado Digital', desc: 'Doa restu Anda merupakan karunia yang sangat berarti bagi kami. Namun jika memberi adalah ungkapan tanda kasih Anda, pemanfaatannya akan kami gunakan sebaik-baiknya.' },
+    birthday: { title: 'Kirim Hadiah', desc: 'Kehadiran Anda adalah kado terindah bagi saya. Namun jika Anda ingin memberikan hadiah sebagai tanda kasih, silakan melalui rekening di bawah ini.' },
+    meeting: { title: 'Registrasi / Biaya', desc: 'Jika acara ini memerlukan biaya pendaftaran atau kontribusi, Anda dapat menyalurkannya melalui detail rekening berikut.' },
+    event: { title: 'Dukungan Acara', desc: 'Terima kasih atas dukungan Anda terhadap acara ini. Kontribusi Anda sangat berarti bagi kelancaran kegiatan kami.' }
+  }
+  const currentLabels = labels[type] || labels.wedding
+
   const [copiedIndex, setCopiedIndex] = useState(null)
 
   const defaultAccounts = [
@@ -35,8 +43,8 @@ const Gift = ({ accounts = [] }) => {
           whileInView={{ opacity: 1, y: 0 }}
         >
           <GiftIcon className="section-icon" size={32} />
-          <h2>Kado Digital</h2>
-          <p>Doa restu Anda merupakan karunia yang sangat berarti bagi kami. Namun jika memberi adalah ungkapan tanda kasih Anda, pemanfaatannya akan kami gunakan sebaik-baiknya.</p>
+          <h2>{currentLabels.title}</h2>
+          <p>{currentLabels.desc}</p>
         </motion.div>
 
         <div className="gift-grid">

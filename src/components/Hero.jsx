@@ -1,7 +1,15 @@
 import { motion } from 'framer-motion'
 import coupleImg from '../assets/couple.png'
 
-const Hero = ({ data = {} }) => {
+const Hero = ({ data = {}, type = 'wedding' }) => {
+  const defaults = {
+    wedding: { title: 'MAHA SUCI ALLAH', desc: 'Atas izin-Mu, kami mengundang Anda untuk merayakan hari bahagia kami.' },
+    birthday: { title: 'HAPPY BIRTHDAY', desc: 'Terima kasih telah menemani perjalanan hidup saya hingga saat ini.' },
+    meeting: { title: 'OFFICIAL MEETING', desc: 'Sinergi dan kolaborasi untuk mencapai tujuan bersama.' },
+    event: { title: 'SPECIAL EVENT', desc: 'Mari bergabung dan rayakan momen spesial ini bersama kami.' }
+  }
+  const current = defaults[type] || defaults.wedding
+
   return (
     <section className="hero-section">
       <div className="hero-image-container">
@@ -21,14 +29,14 @@ const Hero = ({ data = {} }) => {
           whileInView={{ opacity: 1, letterSpacing: '4px' }}
           transition={{ duration: 1 }}
         >
-          {data.title || 'MAHA SUCI ALLAH'}
+          {data.title || current.title}
         </motion.h4>
         <motion.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
         >
-          {data.description || 'Atas izin-Mu, kami mengundang Anda untuk merayakan hari bahagia kami.'}
+          {data.description || current.desc}
         </motion.p>
       </div>
 

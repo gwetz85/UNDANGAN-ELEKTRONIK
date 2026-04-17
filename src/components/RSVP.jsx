@@ -4,7 +4,15 @@ import { Send } from 'lucide-react'
 import { db } from '../firebase'
 import { ref, push, onValue, query, orderByChild, serverTimestamp } from 'firebase/database'
 
-const RSVP = ({ weddingSlug }) => {
+const RSVP = ({ weddingSlug, type = 'wedding' }) => {
+  const labels = {
+    wedding: { title: 'Konfirmasi Kehadiran', wishTitle: 'Doa Restu', wishPlaceholder: 'Ucapan & Doa Restu' },
+    birthday: { title: 'Konfirmasi Kehadiran', wishTitle: 'Harapan & Doa', wishPlaceholder: 'Tulis harapan & doa Anda...' },
+    meeting: { title: 'Konfirmasi Kehadiran', wishTitle: 'Catatan Rapat', wishPlaceholder: 'Catatan atau pertanyaan untuk rapat...' },
+    event: { title: 'Konfirmasi Kehadiran', wishTitle: 'Pesan Tamu', wishPlaceholder: 'Tulis pesan Anda untuk acara ini...' }
+  }
+  const currentLabels = labels[type] || labels.wedding
+
   const [formData, setFormData] = useState({
     name: '',
     attendance: 'Hadir',
@@ -59,7 +67,7 @@ const RSVP = ({ weddingSlug }) => {
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
           >
-            <h3>Konfirmasi Kehadiran</h3>
+            <h3>{currentLabels.title}</h3>
             <form onSubmit={handleSubmit}>
               <div className="form-group">
                 <input 
@@ -82,7 +90,7 @@ const RSVP = ({ weddingSlug }) => {
               </div>
               <div className="form-group">
                 <textarea 
-                  placeholder="Ucapan & Doa Restu"
+                  placeholder={currentLabels.wishPlaceholder}
                   rows="4"
                   value={formData.message}
                   onChange={(e) => setFormData({...formData, message: e.target.value})}
@@ -100,7 +108,7 @@ const RSVP = ({ weddingSlug }) => {
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
           >
-            <h3>Doa Restu</h3>
+            <h3>{currentLabels.wishTitle}</h3>
             <div className="wishes-list">
               {wishes.map((wish, index) => (
                 <div key={index} className="wish-card glass">

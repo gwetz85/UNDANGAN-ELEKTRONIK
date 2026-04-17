@@ -1,6 +1,30 @@
 import { motion } from 'framer-motion'
 
-const Footer = ({ names }) => {
+const Footer = ({ names, type = 'wedding' }) => {
+  const labels = {
+    wedding: { 
+      quote: '"Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya, dan Dia menjadikan di antaramu rasa kasih dan sayang."',
+      source: '(Ar-Rum: 21)',
+      thanks: 'Terima kasih atas doa restunya.'
+    },
+    birthday: { 
+      quote: '"Semoga hari ini menjadi awal dari tahun yang penuh dengan kebahagiaan, kesehatan, dan kesuksesan bagi kita semua."',
+      source: '',
+      thanks: 'Terima kasih telah merayakan hari spesial saya.'
+    },
+    meeting: { 
+      quote: '"Kolaborasi dan komunikasi adalah kunci dari keberhasilan setiap misi besar yang kita emban bersama."',
+      source: '',
+      thanks: 'Terima kasih atas partisipasi dan dedikasi Anda.'
+    },
+    event: { 
+      quote: '"Kehadiran Anda melengkapi kebahagiaan dan kesuksesan acara kami hari ini."',
+      source: '',
+      thanks: 'Terima kasih atas kehadiran Anda.'
+    }
+  }
+  const current = labels[type] || labels.wedding
+
   return (
     <footer className="footer section">
       <div className="container">
@@ -10,13 +34,13 @@ const Footer = ({ names }) => {
           transition={{ duration: 1.5 }}
         >
           <p className="closing-quote">
-            "Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya, dan Dia menjadikan di antaramu rasa kasih dan sayang."
+            {current.quote}
           </p>
-          <p className="surah-info">(Ar-Rum: 21)</p>
+          {current.source && <p className="surah-info">{current.source}</p>}
           
           <div className="footer-couple">
-            <h1>Romeo & Juliet</h1>
-            <p>Terima kasih atas doa restunya.</p>
+            <h1>{names || 'Romeo & Juliet'}</h1>
+            <p>{current.thanks}</p>
           </div>
 
           <div className="copyright">

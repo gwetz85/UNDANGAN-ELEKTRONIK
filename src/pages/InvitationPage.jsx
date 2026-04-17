@@ -78,6 +78,16 @@ function InvitationPage() {
   const template = config.template || 'classic'
   const fontPairing = config.fontPairing || 'classic'
   const animationStyle = config.animationStyle || 'fade'
+  const eventType = config.type || 'wedding'
+
+  const TYPE_PRESETS = {
+    wedding: { coverTitle: 'THE WEDDING OF', guestPrefix: 'Kepada Bapak/Ibu/Saudara/i:' },
+    birthday: { coverTitle: 'HAPPY BIRTHDAY', guestPrefix: 'Special Invite for:' },
+    meeting: { coverTitle: 'OFFICIAL MEETING', guestPrefix: 'Kepada Yth. Rekan:' },
+    event: { coverTitle: 'SPECIAL EVENT', guestPrefix: 'Invitation for:' }
+  }
+
+  const preset = TYPE_PRESETS[eventType] || TYPE_PRESETS.wedding
 
   // Animation Variants based on Template (Opening)
   const exitVariants = {
@@ -124,7 +134,7 @@ function InvitationPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
               >
-                THE WEDDING OF
+                {preset.coverTitle}
               </motion.h4>
               <motion.h1
                 initial={{ opacity: 0, scale: 0.8 }}
@@ -134,7 +144,7 @@ function InvitationPage() {
                 {config.coupleNames || 'Romeo & Juliet'}
               </motion.h1>
               <div className="guest-box">
-                <p>Kepada Bapak/Ibu/Saudara/i:</p>
+                <p>{preset.guestPrefix}</p>
                 <h3>{guestName}</h3>
               </div>
               <button className="btn-premium" onClick={handleOpen}>
@@ -151,13 +161,13 @@ function InvitationPage() {
           animate={{ opacity: 1 }}
           transition={{ duration: 1 }}
         >
-          <MotionSection><Hero data={config.hero} /></MotionSection>
+          <MotionSection><Hero data={config.hero} type={eventType} /></MotionSection>
           <MotionSection><Countdown targetDate={config.weddingDate} /></MotionSection>
           <MotionSection><WeddingInfo events={config.events} /></MotionSection>
           <MotionSection><Gallery photos={config.gallery} /></MotionSection>
-          <MotionSection><Gift accounts={config.bankAccounts} /></MotionSection>
-          <MotionSection><RSVP weddingSlug={weddingSlug} /></MotionSection>
-          <MotionSection><Footer names={config.coupleNames} /></MotionSection>
+          <MotionSection><Gift accounts={config.bankAccounts} type={eventType} /></MotionSection>
+          <MotionSection><RSVP weddingSlug={weddingSlug} type={eventType} /></MotionSection>
+          <MotionSection><Footer names={config.coupleNames} type={eventType} /></MotionSection>
 
           <audio 
             ref={audioRef}

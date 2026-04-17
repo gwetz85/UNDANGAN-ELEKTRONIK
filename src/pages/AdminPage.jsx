@@ -18,7 +18,7 @@ const AdminPage = () => {
   // Settings & Creation State
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
-  const [newWedding, setNewWedding] = useState({ slug: '', coupleNames: '' })
+  const [newWedding, setNewWedding] = useState({ slug: '', coupleNames: '', type: 'wedding' })
   const [config, setConfig] = useState({
     coupleNames: '',
     weddingDate: '',
@@ -30,7 +30,8 @@ const AdminPage = () => {
     gallery: [],
     template: 'classic',
     fontPairing: 'classic',
-    animationStyle: 'fade'
+    animationStyle: 'fade',
+    type: 'wedding'
   })
 
   useEffect(() => {
@@ -112,7 +113,8 @@ const AdminPage = () => {
         hero: { title: 'MAHA SUCI ALLAH', description: 'Atas izin-Mu, kami mengundang Anda untuk merayakan hari bahagia kami.' },
         template: 'classic',
         fontPairing: 'classic',
-        animationStyle: 'fade'
+        animationStyle: 'fade',
+        type: newWedding.type || 'wedding'
       })
       setShowCreateModal(false)
       setNewWedding({ slug: '', coupleNames: '' })
@@ -348,13 +350,25 @@ const AdminPage = () => {
                   </div>
                   <div className="form-grid">
                     <div className="form-group">
-                      <label>Nama Pasangan</label>
+                      <label>Judul / Nama Acara</label>
                       <input 
                         type="text" 
                         value={config.coupleNames} 
                         onChange={(e) => setConfig({...config, coupleNames: e.target.value})}
-                        placeholder="Contoh: Romeo & Juliet"
+                        placeholder="Contoh: Romeo & Juliet / Rapat Divisi"
                       />
+                    </div>
+                    <div className="form-group">
+                      <label>Tipe Undangan</label>
+                      <select 
+                        value={config.type || 'wedding'} 
+                        onChange={(e) => setConfig({...config, type: e.target.value})}
+                      >
+                        <option value="wedding">Pernikahan (Wedding)</option>
+                        <option value="birthday">Ulang Tahun (Birthday)</option>
+                        <option value="meeting">Rapat (Meeting)</option>
+                        <option value="event">Acara Umum (Event)</option>
+                      </select>
                     </div>
                     <div className="form-group">
                       <label>Tanggal Pernikahan</label>
@@ -675,14 +689,27 @@ const AdminPage = () => {
                   <small>Link akan menjadi: <code>your-site.com/{newWedding.slug || 'slug'}</code></small>
                 </div>
                 <div className="form-group">
-                  <label>Nama Pasangan</label>
+                  <label>Judul / Nama Acara</label>
                   <input 
                     type="text" 
-                    placeholder="Budi & Santi"
+                    placeholder="Budi & Santi / Rapat Tahunan"
                     value={newWedding.coupleNames}
                     onChange={(e) => setNewWedding({...newWedding, coupleNames: e.target.value})}
                     required
                   />
+                </div>
+                <div className="form-group">
+                  <label>Tipe Undangan</label>
+                  <select 
+                    value={newWedding.type} 
+                    onChange={(e) => setNewWedding({...newWedding, type: e.target.value})}
+                    className="modal-select"
+                  >
+                    <option value="wedding">Pernikahan (Wedding)</option>
+                    <option value="birthday">Ulang Tahun (Birthday)</option>
+                    <option value="meeting">Rapat (Meeting)</option>
+                    <option value="event">Acara Umum (Event)</option>
+                  </select>
                 </div>
                 <div className="modal-actions">
                   <button type="button" className="btn-secondary" onClick={() => setShowCreateModal(false)}>Batal</button>
