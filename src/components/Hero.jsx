@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import coupleImg from '../assets/couple.png'
 
-const Hero = () => {
+const Hero = ({ data = {} }) => {
   return (
     <section className="hero-section">
       <div className="hero-image-container">
@@ -10,7 +10,7 @@ const Hero = () => {
           initial={{ scale: 1.2, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 2, ease: "easeOut" }}
-          style={{ backgroundImage: `url(${coupleImg})` }}
+          style={{ backgroundImage: `url(${data.image || coupleImg})` }}
         />
         <div className="hero-overlay"></div>
       </div>
@@ -21,14 +21,14 @@ const Hero = () => {
           whileInView={{ opacity: 1, letterSpacing: '4px' }}
           transition={{ duration: 1 }}
         >
-          MAHA SUCI ALLAH
+          {data.title || 'MAHA SUCI ALLAH'}
         </motion.h4>
         <motion.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
         >
-          Atas izin-Mu, kami mengundang Anda untuk merayakan hari bahagia kami.
+          {data.description || 'Atas izin-Mu, kami mengundang Anda untuk merayakan hari bahagia kami.'}
         </motion.p>
       </div>
 

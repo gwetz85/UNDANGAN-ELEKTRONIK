@@ -2,10 +2,10 @@ import { motion } from 'framer-motion'
 import { Copy, Check, CreditCard, Gift as GiftIcon } from 'lucide-react'
 import { useState } from 'react'
 
-const Gift = () => {
+const Gift = ({ accounts = [] }) => {
   const [copiedIndex, setCopiedIndex] = useState(null)
 
-  const accounts = [
+  const defaultAccounts = [
     {
       bank: 'Bank BCA',
       number: '1234567890',
@@ -40,7 +40,7 @@ const Gift = () => {
         </motion.div>
 
         <div className="gift-grid">
-          {accounts.map((acc, index) => (
+          {(accounts.length > 0 ? accounts : defaultAccounts).map((acc, index) => (
             <motion.div 
               key={index}
               className="gift-card glass"

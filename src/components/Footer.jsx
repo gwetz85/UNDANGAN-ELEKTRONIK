@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 
-const Footer = () => {
+const Footer = ({ names }) => {
   return (
     <footer className="footer section">
       <div className="container">

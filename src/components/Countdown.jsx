@@ -7,8 +7,8 @@ const Countdown = ({ targetDate }) => {
   })
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      const difference = +new Date(targetDate) - +new Date()
+    const calculateTimeLeft = () => {
+      const difference = +new Date(targetDate || '2026-12-31T09:00:00') - +new Date()
       
       if (difference > 0) {
         setTimeLeft({

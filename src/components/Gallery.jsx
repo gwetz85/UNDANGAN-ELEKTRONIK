@@ -7,7 +7,8 @@ import couple from '../assets/couple.png'
 import bg from '../assets/bg.png'
 
 const Gallery = () => {
-  const photos = [
+const Gallery = ({ photos = [] }) => {
+  const defaultPhotos = [
     g1,
     g2,
     g3,
@@ -15,6 +16,8 @@ const Gallery = () => {
     couple,
     bg,
   ]
+
+  const displayPhotos = photos?.length > 0 ? photos : defaultPhotos
 
   return (
     <section className="section gallery-section">
@@ -28,7 +31,7 @@ const Gallery = () => {
         </motion.h2>
         
         <div className="gallery-grid">
-          {photos.map((src, index) => (
+          {displayPhotos.map((src, index) => (
             <motion.div 
               key={index}
               className="gallery-item"

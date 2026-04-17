@@ -1,21 +1,42 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Users, MessageSquare, Plus, Trash2, Copy, Check, LogOut, ExternalLink } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { Users, MessageSquare, Plus, Trash2, Copy, Check, LogOut, ExternalLink, ChevronLeft, LayoutDashboard } from 'lucide-react'
+import { useNavigate, useParams, Link } from 'react-router-dom'
 import { db } from '../firebase'
 import { ref, push, onValue, remove, serverTimestamp, query, orderByChild } from 'firebase/database'
 
 const AdminPage = () => {
   const navigate = useNavigate()
+  const { weddingSlug } = useParams()
   const [activeTab, setActiveTab] = useState('guests')
+  const [weddings, setWeddings] = useState([])
   const [guests, setGuests] = useState([])
   const [rsvps, setRsvps] = useState([])
   const [newGuestName, setNewGuestName] = useState('')
   const [copiedIndex, setCopiedIndex] = useState(null)
 
   useEffect(() => {
-    // Listen to Guests
-    const guestRef = query(ref(db, 'guests'), orderByChild('createdAt'))
+    if (!weddingSlug) {
+      // Fetch all weddings for the global dashboard
+      const weddingsRef = ref(db, 'weddings')
+      const unsub = onValue(weddingsRef, (snapshot) => {
+        const data = snapshot.val()
+        if (data) {
+          setWeddings(Object.keys(data).map(key => ({ 
+            slug: key, 
+            coupleNames: data[key]?.config?.coupleNames || key,
+            guestCount: Object.keys(data[key]?.guests || {}).length,
+            rsvpCount: Object.keys(data[key]?.rsvps || {}).length
+          })))
+        } else {
+          setWeddings([])
+        }
+      })
+      return () => unsub()
+    }
+
+    // Listen to Guests for a specific wedding
+    const guestRef = query(ref(db, `weddings/${weddingSlug}/guests`), orderByChild('createdAt'))
     const unsubGuests = onValue(guestRef, (snapshot) => {
       const data = snapshot.val()
       if (data) {
@@ -25,8 +46,8 @@ const AdminPage = () => {
       }
     })
 
-    // Listen to RSVPs
-    const rsvpRef = query(ref(db, 'rsvps'), orderByChild('createdAt'))
+    // Listen to RSVPs for a specific wedding
+    const rsvpRef = query(ref(db, `weddings/${weddingSlug}/rsvps`), orderByChild('createdAt'))
     const unsubRsvps = onValue(rsvpRef, (snapshot) => {
       const data = snapshot.val()
       if (data) {
@@ -40,7 +61,7 @@ const AdminPage = () => {
       unsubGuests()
       unsubRsvps()
     }
-  }, [])
+  }, [weddingSlug])
 
   const handleLogout = () => {
     localStorage.removeItem('admin_authenticated')
@@ -49,9 +70,9 @@ const AdminPage = () => {
 
   const addGuest = async (e) => {
     e.preventDefault()
-    if (!newGuestName.trim()) return
+    if (!newGuestName.trim() || !weddingSlug) return
     try {
-      await push(ref(db, 'guests'), {
+      await push(ref(db, `weddings/${weddingSlug}/guests`), {
         name: newGuestName,
         createdAt: serverTimestamp()
       })
@@ -62,9 +83,9 @@ const AdminPage = () => {
   }
 
   const deleteGuest = async (id) => {
-    if (window.confirm('Hapus tamu ini?')) {
+    if (window.confirm('Hapus tamu ini?') && weddingSlug) {
       try {
-        await remove(ref(db, `guests/${id}`))
+        await remove(ref(db, `weddings/${weddingSlug}/guests/${id}`))
       } catch (error) {
         console.error("Error deleting guest:", error)
       }
@@ -73,7 +94,7 @@ const AdminPage = () => {
 
   const copyLink = (name, index) => {
     const baseUrl = window.location.origin
-    const link = `${baseUrl}/?to=${encodeURIComponent(name)}`
+    const link = `${baseUrl}/${weddingSlug}?to=${encodeURIComponent(name)}`
     navigator.clipboard.writeText(link)
     setCopiedIndex(index)
     setTimeout(() => setCopiedIndex(null), 2000)
@@ -94,17 +115,29 @@ const AdminPage = () => {
         </div>
         <nav>
           <button 
-            className={activeTab === 'guests' ? 'active' : ''} 
-            onClick={() => setActiveTab('guests')}
+            className={!weddingSlug ? 'active' : ''} 
+            onClick={() => navigate('/admin')}
           >
-            <Users size={20} /> Manajemen Tamu
+            <LayoutDashboard size={20} /> Semua Undangan
           </button>
-          <button 
-            className={activeTab === 'rsvp' ? 'active' : ''} 
-            onClick={() => setActiveTab('rsvp')}
-          >
-            <MessageSquare size={20} /> Daftar RSVP
-          </button>
+          
+          {weddingSlug && (
+            <>
+              <div className="sidebar-divider">Kelola: {weddingSlug}</div>
+              <button 
+                className={activeTab === 'guests' ? 'active' : ''} 
+                onClick={() => setActiveTab('guests')}
+              >
+                <Users size={20} /> Manajemen Tamu
+              </button>
+              <button 
+                className={activeTab === 'rsvp' ? 'active' : ''} 
+                onClick={() => setActiveTab('rsvp')}
+              >
+                <MessageSquare size={20} /> Daftar RSVP
+              </button>
+            </>
+          )}
         </nav>
         <button className="logout-btn" onClick={handleLogout}>
           <LogOut size={20} /> Logout
@@ -113,23 +146,62 @@ const AdminPage = () => {
 
       <main className="main-content">
         <header className="main-header">
-          <div className="stats-grid">
-            <div className="stat-card glass">
-              <span>Total Tamu</span>
-              <h3>{stats.totalGuests}</h3>
+          {weddingSlug ? (
+            <div className="header-top">
+              <button className="back-link" onClick={() => navigate('/admin')}>
+                <ChevronLeft size={20} /> Kembali ke Daftar
+              </button>
+              <div className="stats-grid">
+                <div className="stat-card glass">
+                  <span>Total Tamu</span>
+                  <h3>{stats.totalGuests}</h3>
+                </div>
+                <div className="stat-card glass">
+                  <span>Total RSVP</span>
+                  <h3>{stats.totalRSVP}</h3>
+                </div>
+                <div className="stat-card glass">
+                  <span>Hadir</span>
+                  <h3>{stats.attending}</h3>
+                </div>
+              </div>
             </div>
-            <div className="stat-card glass">
-              <span>Total RSVP</span>
-              <h3>{stats.totalRSVP}</h3>
-            </div>
-            <div className="stat-card glass">
-              <span>Hadir</span>
-              <h3>{stats.attending}</h3>
-            </div>
-          </div>
+          ) : (
+            <h1>Semua Undangan Aktif</h1>
+          )}
         </header>
 
-        {activeTab === 'guests' ? (
+        {!weddingSlug ? (
+          <div className="wedding-list">
+            {weddings.length === 0 ? (
+              <div className="card glass empty-state">
+                <p>Belum ada undangan yang dibuat di database.</p>
+                <p className="hint">Silakan tambahkan data di Firebase Console bawah node <code>weddings/</code></p>
+              </div>
+            ) : (
+              <div className="wedding-grid">
+                {weddings.map(w => (
+                  <div key={w.slug} className="card glass wedding-card">
+                    <h3>{w.coupleNames}</h3>
+                    <div className="wedding-stats">
+                      <span>{w.guestCount} Tamu</span>
+                      <span>{w.rsvpCount} RSVP</span>
+                    </div>
+                    <div className="wedding-actions">
+                      <button className="btn-secondary" onClick={() => navigate(`/admin/${w.slug}`)}>
+                        Kelola
+                      </button>
+                      <a href={`/${w.slug}`} target="_blank" rel="noreferrer" className="btn-icon">
+                        <ExternalLink size={18} />
+                      </a>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          activeTab === 'guests' ? (
           <div className="tab-content">
             <div className="card glass">
               <div className="card-header">
@@ -264,6 +336,13 @@ const AdminPage = () => {
         .sidebar-header { margin-bottom: 50px; }
         .sidebar-header h2 { font-family: var(--font-heading); color: var(--primary-light); }
         .sidebar-header p { font-size: 0.8rem; opacity: 0.7; }
+        .sidebar-divider {
+          font-size: 0.7rem;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin: 20px 0 10px 15px;
+          opacity: 0.5;
+        }
         nav { flex: 1; display: flex; flex-direction: column; gap: 10px; }
         nav button {
           background: transparent;
@@ -299,6 +378,53 @@ const AdminPage = () => {
         .stat-card { padding: 25px; border-radius: 20px; text-align: center; }
         .stat-card span { font-size: 0.8rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; }
         .stat-card h3 { font-size: 2rem; color: var(--secondary); margin-top: 5px; }
+        .header-top { display: flex; flex-direction: column; gap: 20px; }
+        .back-link {
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          color: var(--primary);
+          background: none;
+          border: none;
+          cursor: pointer;
+          font-weight: 600;
+          width: fit-content;
+        }
+        .wedding-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+          gap: 20px;
+        }
+        .wedding-card {
+          display: flex;
+          flex-direction: column;
+          gap: 15px;
+        }
+        .wedding-card h3 { color: var(--secondary); margin: 0; }
+        .wedding-stats { display: flex; gap: 15px; font-size: 0.85rem; color: var(--text-light); }
+        .wedding-actions { display: flex; gap: 10px; border-top: 1px solid #f7fafc; pt: 15px; margin-top: 5px;}
+        .btn-secondary {
+          flex: 1;
+          padding: 8px;
+          border-radius: 8px;
+          border: 1px solid var(--primary);
+          background: white;
+          color: var(--primary);
+          font-weight: 600;
+          cursor: pointer;
+        }
+        .btn-icon {
+          width: 36px;
+          height: 36px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 8px;
+          background: #f7fafc;
+          color: var(--text-light);
+        }
+        .empty-state { text-align: center; padding: 60px !important; }
+        .hint { font-size: 0.85rem; opacity: 0.6; margin-top: 10px; }
         .card { background: white; border-radius: 20px; padding: 30px; margin-bottom: 30px; border: 1px solid rgba(0,0,0,0.05); }
         .card-header { margin-bottom: 25px; }
         .card-header h3 { color: var(--secondary); font-size: 1.2rem; }

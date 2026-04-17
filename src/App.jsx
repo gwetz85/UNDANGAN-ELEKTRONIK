@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import InvitationPage from './pages/InvitationPage'
 import AdminPage from './pages/AdminPage'
 import LoginPage from './pages/LoginPage'
+import LandingPage from './pages/LandingPage'
 
 // Simple Auth Component
 const ProtectedRoute = ({ children }) => {
@@ -13,13 +14,16 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Guest Route */}
-        <Route path="/" element={<InvitationPage />} />
+        {/* Service Landing Page */}
+        <Route path="/" element={<LandingPage />} />
+        
+        {/* Guest Route (Dynamic Invitation) */}
+        <Route path="/:weddingSlug" element={<InvitationPage />} />
         
         {/* Admin Login */}
         <Route path="/login" element={<LoginPage />} />
         
-        {/* Protected Admin Route */}
+        {/* Protected Admin Routes */}
         <Route 
           path="/admin" 
           element={
@@ -28,8 +32,16 @@ function App() {
             </ProtectedRoute>
           } 
         />
+        <Route 
+          path="/admin/:weddingSlug" 
+          element={
+            <ProtectedRoute>
+              <AdminPage />
+            </ProtectedRoute>
+          } 
+        />
         
-        {/* Catch-all redirect to Invitation */}
+        {/* Catch-all redirect to Landing Page */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>

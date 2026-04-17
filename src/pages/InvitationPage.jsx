@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Play, Pause } from 'lucide-react'
+import { Play, Pause, Loader2 } from 'lucide-react'
+import { useParams, Link } from 'react-router-dom'
+import { db } from '../firebase'
+import { ref, onValue } from 'firebase/database'
 import Hero from '../components/Hero'
 import Countdown from '../components/Countdown'
 import WeddingInfo from '../components/WeddingInfo'
@@ -12,16 +15,28 @@ import { useRef } from 'react'
 import bgImage from '../assets/bg.png'
 
 function InvitationPage() {
+  const { weddingSlug } = useParams()
   const [isOpen, setIsOpen] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
   const [guestName, setGuestName] = useState('Tamu Undangan')
+  const [weddingData, setWeddingData] = useState(null)
+  const [loading, setLoading] = useState(true)
   const audioRef = useRef(null)
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const to = params.get('to')
     if (to) setGuestName(to)
-  }, [])
+
+    // Fetch Wedding Data
+    const weddingRef = ref(db, `weddings/${weddingSlug}`)
+    const unsubscribe = onValue(weddingRef, (snapshot) => {
+      setWeddingData(snapshot.val())
+      setLoading(false)
+    })
+
+    return () => unsubscribe()
+  }, [weddingSlug])
 
   const handleOpen = () => {
     setIsOpen(true)
@@ -40,6 +55,27 @@ function InvitationPage() {
     setIsPlaying(!isPlaying)
   }
 
+  if (loading) {
+    return (
+      <div className="status-container">
+        <Loader2 className="animate-spin" size={48} color="#b8860b" />
+        <p>Memuat Undangan...</p>
+      </div>
+    )
+  }
+
+  if (!weddingData) {
+    return (
+      <div className="status-container">
+        <h2>Undangan Tidak Ditemukan</h2>
+        <p>Maaf, tautan yang Anda berikan tidak valid.</p>
+        <Link to="/" className="btn-premium">Kembali ke Beranda</Link>
+      </div>
+    )
+  }
+
+  const { theme = {}, config = {} } = weddingData
+
   return (
     <div className="app-container">
       <AnimatePresence>
@@ -49,6 +85,7 @@ function InvitationPage() {
             initial={{ opacity: 1 }}
             exit={{ opacity: 0, y: '-100%' }}
             transition={{ duration: 1, ease: "easeInOut" }}
+            style={{ backgroundImage: `url(${config.coverImage || bgImage})` }}
           >
             <div className="cover-content">
               <motion.h4
@@ -63,7 +100,7 @@ function InvitationPage() {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.5, duration: 0.8 }}
               >
-                Romeo & Juliet
+                {config.coupleNames || 'Romeo & Juliet'}
               </motion.h1>
               <div className="guest-box">
                 <p>Kepada Bapak/Ibu/Saudara/i:</p>
@@ -83,17 +120,17 @@ function InvitationPage() {
           animate={{ opacity: 1 }}
           transition={{ duration: 1 }}
         >
-          <Hero />
-          <Countdown targetDate="2026-12-31T09:00:00" />
-          <WeddingInfo />
-          <Gallery />
-          <Gift />
-          <RSVP />
-          <Footer />
+          <Hero data={config.hero} />
+          <Countdown targetDate={config.weddingDate} />
+          <WeddingInfo events={config.events} />
+          <Gallery photos={config.gallery} />
+          <Gift accounts={config.bankAccounts} />
+          <RSVP weddingSlug={weddingSlug} />
+          <Footer names={config.coupleNames} />
 
           <audio 
             ref={audioRef}
-            src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" 
+            src={config.musicUrl || "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"} 
             loop 
           />
 
@@ -201,6 +238,18 @@ function InvitationPage() {
           0%, 100% { height: 5px; }
           50% { height: 100%; }
         }
+        .status-container {
+          height: 100vh;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 20px;
+          color: var(--text-dark);
+          text-align: center;
+          padding: 20px;
+        }
+        .status-container h2 { color: var(--primary); }
       `}</style>
     </div>
   )

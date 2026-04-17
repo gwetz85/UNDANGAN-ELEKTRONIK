@@ -4,7 +4,7 @@ import { Send } from 'lucide-react'
 import { db } from '../firebase'
 import { ref, push, onValue, query, orderByChild, serverTimestamp } from 'firebase/database'
 
-const RSVP = () => {
+const RSVP = ({ weddingSlug }) => {
   const [formData, setFormData] = useState({
     name: '',
     attendance: 'Hadir',
@@ -13,7 +13,8 @@ const RSVP = () => {
   const [wishes, setWishes] = useState([])
 
   useEffect(() => {
-    const rsvpRef = query(ref(db, 'rsvps'), orderByChild('createdAt'))
+    if (!weddingSlug) return
+    const rsvpRef = query(ref(db, `weddings/${weddingSlug}/rsvps`), orderByChild('createdAt'))
     const unsubscribe = onValue(rsvpRef, (snapshot) => {
       const data = snapshot.val()
       if (data) {
@@ -33,9 +34,9 @@ const RSVP = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (formData.name && formData.message) {
+    if (formData.name && formData.message && weddingSlug) {
       try {
-        const rsvpRef = ref(db, 'rsvps')
+        const rsvpRef = ref(db, `weddings/${weddingSlug}/rsvps`)
         await push(rsvpRef, {
           ...formData,
           createdAt: serverTimestamp()

@@ -2,8 +2,8 @@ import { motion } from 'framer-motion'
 import { Calendar, MapPin, Clock } from 'lucide-react'
 import bgImage from '../assets/bg.png'
 
-const WeddingInfo = () => {
-  const events = [
+const WeddingInfo = ({ events = [] }) => {
+  const defaultEvents = [
     {
       title: 'Akad Nikah',
       date: 'Minggu, 31 Desember 2026',
@@ -29,7 +29,7 @@ const WeddingInfo = () => {
           whileInView={{ opacity: 1 }}
           transition={{ duration: 1 }}
         >
-          {events.map((event, index) => (
+          {(events.length > 0 ? events : defaultEvents).map((event, index) => (
             <motion.div 
               key={index}
               className="info-card glass"
