@@ -82,51 +82,61 @@ function InvitationPage() {
   }, [youtubeId])
 
   const toggleMusic = (forcePlay = null) => {
-    const shouldPlay = forcePlay !== null ? forcePlay : !isPlaying
+    const nextState = forcePlay !== null ? forcePlay : !isPlaying
+    setIsPlaying(nextState)
     
+    // Immediate attempt
     if (youtubeId && ytPlayer) {
-      if (shouldPlay) ytPlayer.playVideo()
+      if (nextState) ytPlayer.playVideo()
       else ytPlayer.pauseVideo()
     } else if (audioRef.current) {
-      if (shouldPlay) audioRef.current.play().catch(e => console.log("Blocked:", e))
+      if (nextState) audioRef.current.play().catch(() => {})
       else audioRef.current.pause()
     }
-    
-    setIsPlaying(shouldPlay)
   }
 
-  // Auto-play attempt & Global click trigger
+  // Persistence Effect: Keep trying to play if isPlaying is true but player was muted/blocked/not ready
   useEffect(() => {
-    const startMusic = () => {
-      if (!isPlaying) {
-        toggleMusic(true)
+    if (!isPlaying) return
+
+    const attemptPlay = () => {
+      if (youtubeId && ytPlayer) {
+        if (ytPlayer.getPlayerState?.() !== 1) { // 1 is playing
+          ytPlayer.playVideo()
+        }
+      } else if (audioRef.current && audioRef.current.paused) {
+        audioRef.current.play().catch(() => {})
       }
     }
 
-    // Try playing on data load
-    if (weddingData && (ytPlayer || audioRef.current)) {
-      startMusic()
+    // Try now
+    attemptPlay()
+
+    // Also listen for first interaction if still not playing
+    const handleInteraction = () => {
+      attemptPlay()
+      // We don't necessarily remove it here, toggleMusic handles the state
     }
 
-    // Global listener for first interaction
-    const handleFirstInteraction = () => {
-      startMusic()
-      document.removeEventListener('click', handleFirstInteraction)
-      document.removeEventListener('touchstart', handleFirstInteraction)
-    }
-
-    document.addEventListener('click', handleFirstInteraction)
-    document.addEventListener('touchstart', handleFirstInteraction)
+    document.addEventListener('click', handleInteraction)
+    document.addEventListener('touchstart', handleInteraction)
 
     return () => {
-      document.removeEventListener('click', handleFirstInteraction)
-      document.removeEventListener('touchstart', handleFirstInteraction)
+      document.removeEventListener('click', handleInteraction)
+      document.removeEventListener('touchstart', handleInteraction)
     }
-  }, [weddingData, ytPlayer, isPlaying])
+  }, [isPlaying, ytPlayer, youtubeId])
+
+  // Auto-start intended state on load
+  useEffect(() => {
+    if (weddingData && !isPlaying) {
+      setIsPlaying(true)
+    }
+  }, [weddingData])
 
   const handleOpen = () => {
     setIsOpen(true)
-    if (!isPlaying) toggleMusic(true)
+    setIsPlaying(true)
   }
 
   if (loading) {
