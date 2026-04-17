@@ -28,7 +28,9 @@ const AdminPage = () => {
     events: [],
     bankAccounts: [],
     gallery: [],
-    template: 'classic'
+    template: 'classic',
+    fontPairing: 'classic',
+    animationStyle: 'fade'
   })
 
   useEffect(() => {
@@ -108,7 +110,9 @@ const AdminPage = () => {
         coupleNames: newWedding.coupleNames,
         weddingDate: new Date().toISOString().split('T')[0] + 'T09:00:00',
         hero: { title: 'MAHA SUCI ALLAH', description: 'Atas izin-Mu, kami mengundang Anda untuk merayakan hari bahagia kami.' },
-        template: 'classic'
+        template: 'classic',
+        fontPairing: 'classic',
+        animationStyle: 'fade'
       })
       setShowCreateModal(false)
       setNewWedding({ slug: '', coupleNames: '' })
@@ -384,11 +388,32 @@ const AdminPage = () => {
                         onChange={(e) => setConfig({...config, template: e.target.value})}
                         className="template-select"
                       >
-                        <option value="classic">Classic Gold (Timeless)</option>
-                        <option value="modern">Modern Royal (Dark Mode)</option>
-                        <option value="nature">Nature Forest (Organic)</option>
-                        <option value="romantic">Romantic Pink (Soft)</option>
                         <option value="vintage">Vintage (Antique)</option>
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label>Jenis Huruf (Font)</label>
+                      <select 
+                        value={config.fontPairing || 'classic'} 
+                        onChange={(e) => setConfig({...config, fontPairing: e.target.value})}
+                      >
+                        <option value="classic">Classic (Serif + Sans)</option>
+                        <option value="modern">Modern (Clean Sans)</option>
+                        <option value="elegant">Elegant (Display Serif)</option>
+                        <option value="romantic">Romantic (Handwritten)</option>
+                        <option value="vintage">Vintage (Antique Garamond)</option>
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label>Gaya Animasi Undangan</label>
+                      <select 
+                        value={config.animationStyle || 'fade'} 
+                        onChange={(e) => setConfig({...config, animationStyle: e.target.value})}
+                      >
+                        <option value="fade">Standar (Fade In)</option>
+                        <option value="slide">Meluncur (Slide Up)</option>
+                        <option value="zoom">Zoom (Soft Scale)</option>
+                        <option value="elegant">Mewah (Scale & Fade)</option>
                       </select>
                     </div>
                   </div>

@@ -76,8 +76,10 @@ function InvitationPage() {
 
   const { theme: customTheme = {}, config = {} } = weddingData || {}
   const template = config.template || 'classic'
+  const fontPairing = config.fontPairing || 'classic'
+  const animationStyle = config.animationStyle || 'fade'
 
-  // Animation Variants based on Template
+  // Animation Variants based on Template (Opening)
   const exitVariants = {
     classic: { opacity: 0, y: '-100%', transition: { duration: 1, ease: 'easeInOut' } },
     modern: { opacity: 0, scale: 0.8, filter: 'blur(10px)', transition: { duration: 0.8 } },
@@ -86,8 +88,27 @@ function InvitationPage() {
     vintage: { opacity: 0, filter: 'sepia(1) contrast(0.5)', transition: { duration: 1.5 } }
   }
 
+  // Scroll Reveal Variants
+  const revealVariants = {
+    fade: { initial: { opacity: 0 }, whileInView: { opacity: 1 }, transition: { duration: 0.8 } },
+    slide: { initial: { opacity: 0, y: 50 }, whileInView: { opacity: 1, y: 0 }, transition: { duration: 0.8 } },
+    zoom: { initial: { opacity: 0, scale: 0.9 }, whileInView: { opacity: 1, scale: 1 }, transition: { duration: 0.8 } },
+    elegant: { initial: { opacity: 0, y: 30, scale: 0.95 }, whileInView: { opacity: 1, y: 0, scale: 1 }, transition: { duration: 1 } }
+  }
+
+  const MotionSection = ({ children }) => (
+    <motion.section
+      initial={revealVariants[animationStyle]?.initial}
+      whileInView={revealVariants[animationStyle]?.whileInView}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={revealVariants[animationStyle]?.transition}
+    >
+      {children}
+    </motion.section>
+  )
+
   return (
-    <div className="app-container" data-theme={template}>
+    <div className="app-container" data-theme={template} data-font={fontPairing}>
       <AnimatePresence mode="wait">
         {!isOpen && (
           <motion.div 
@@ -130,13 +151,13 @@ function InvitationPage() {
           animate={{ opacity: 1 }}
           transition={{ duration: 1 }}
         >
-          <Hero data={config.hero} />
-          <Countdown targetDate={config.weddingDate} />
-          <WeddingInfo events={config.events} />
-          <Gallery photos={config.gallery} />
-          <Gift accounts={config.bankAccounts} />
-          <RSVP weddingSlug={weddingSlug} />
-          <Footer names={config.coupleNames} />
+          <MotionSection><Hero data={config.hero} /></MotionSection>
+          <MotionSection><Countdown targetDate={config.weddingDate} /></MotionSection>
+          <MotionSection><WeddingInfo events={config.events} /></MotionSection>
+          <MotionSection><Gallery photos={config.gallery} /></MotionSection>
+          <MotionSection><Gift accounts={config.bankAccounts} /></MotionSection>
+          <MotionSection><RSVP weddingSlug={weddingSlug} /></MotionSection>
+          <MotionSection><Footer names={config.coupleNames} /></MotionSection>
 
           <audio 
             ref={audioRef}

@@ -1,4 +1,23 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,700;1,400&family=Great+Vibes&family=Inter:wght@300;400;600&family=Lato:wght@300;400;700&family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Roboto:wght@300;400;700&display=swap');
+
+/* Font Pairings */
+[data-font='classic'] { --font-heading: 'Playfair Display', serif; --font-body: 'Montserrat', sans-serif; }
+[data-font='modern'] { --font-heading: 'Montserrat', sans-serif; --font-body: 'Inter', sans-serif; }
+[data-font='elegant'] { --font-heading: 'Cinzel', serif; --font-body: 'Lato', sans-serif; }
+[data-font='romantic'] { --font-heading: 'Great Vibes', cursive; --font-body: 'Montserrat', sans-serif; }
+[data-font='vintage'] { --font-heading: 'Cormorant Garamond', serif; --font-body: 'Roboto', sans-serif; }
+
+/* Romantic Theme Heading adjustment */
+[data-font='romantic'] h1, 
+[data-font='romantic'] h2 { 
+  font-weight: 400; 
+  font-size: 3.5rem; 
+}
+
+@media (max-width: 768px) {
+  [data-font='romantic'] h1 { font-size: 2.5rem; }
+  [data-font='romantic'] h2 { font-size: 2rem; }
+}
 
 :root {
   --primary: #b8860b;
