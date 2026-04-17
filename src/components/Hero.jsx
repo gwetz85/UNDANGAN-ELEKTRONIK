@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import coupleImg from '../assets/couple.png'
+import { getDirectImageUrl } from '../utils/url'
 
 const Hero = ({ data = {}, type = 'wedding' }) => {
   const defaults = {
@@ -34,7 +35,8 @@ const Hero = ({ data = {}, type = 'wedding' }) => {
           initial={{ scale: 1.2, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 2, ease: "easeOut" }}
-          style={{ backgroundImage: `url(${data.image || current.image})` }}
+          transition={{ duration: 2, ease: "easeOut" }}
+          style={{ backgroundImage: `url(${getDirectImageUrl(data.image) || current.image})` }}
         />
         <div className="hero-overlay"></div>
       </div>

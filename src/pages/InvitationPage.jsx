@@ -11,6 +11,7 @@ import Gallery from '../components/Gallery'
 import RSVP from '../components/RSVP'
 import Gift from '../components/Gift'
 import Footer from '../components/Footer'
+import { getDirectImageUrl } from '../utils/url'
 import { useRef } from 'react'
 import bgImage from '../assets/bg.png'
 
@@ -142,7 +143,7 @@ function InvitationPage() {
             className="cover-overlay"
             initial={{ opacity: 1 }}
             exit={exitVariants[template] || exitVariants.classic}
-            style={{ backgroundImage: `url(${config.coverImage || preset.bg})` }}
+            style={{ backgroundImage: `url(${getDirectImageUrl(config.coverImage) || preset.bg})` }}
           >
             <div className="cover-content">
               <motion.h4

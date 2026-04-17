@@ -5,6 +5,7 @@ import g3 from '../assets/g3.png'
 import g4 from '../assets/g4.png'
 import couple from '../assets/couple.png'
 import bg from '../assets/bg.png'
+import { getDirectImageUrl } from '../utils/url'
 
 const Gallery = ({ photos = [] }) => {
   const defaultPhotos = [
@@ -16,7 +17,7 @@ const Gallery = ({ photos = [] }) => {
     bg,
   ]
 
-  const displayPhotos = photos?.length > 0 ? photos : defaultPhotos
+  const displayPhotos = (photos?.length > 0 ? photos : defaultPhotos).map(src => getDirectImageUrl(src))
 
   return (
     <section className="section gallery-section">
