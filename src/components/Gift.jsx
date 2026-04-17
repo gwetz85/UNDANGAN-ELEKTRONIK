@@ -34,6 +34,14 @@ const Gift = ({ accounts = [], type = 'wedding' }) => {
     setTimeout(() => setCopiedIndex(null), 2000)
   }
 
+  const backgrounds = {
+    wedding: 'https://www.transparenttextures.com/patterns/p6.png',
+    birthday: 'https://www.transparenttextures.com/patterns/starring.png',
+    meeting: 'https://www.transparenttextures.com/patterns/subtle-white-feathers.png',
+    event: 'https://www.transparenttextures.com/patterns/black-linen.png'
+  }
+  const currentBg = backgrounds[type] || backgrounds.wedding
+
   return (
     <section className="section gift-section">
       <div className="container">
@@ -76,7 +84,12 @@ const Gift = ({ accounts = [], type = 'wedding' }) => {
       <style>{`
         .gift-section {
           background-color: var(--bg-cream);
+          background-image: url('${currentBg}');
+          background-repeat: repeat;
+          background-attachment: fixed;
+          position: relative;
         }
+        .container { position: relative; z-index: 1; }
         .section-header {
           max-width: 600px;
           margin: 0 auto 50px;

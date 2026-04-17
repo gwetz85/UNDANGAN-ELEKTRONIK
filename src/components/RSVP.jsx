@@ -58,6 +58,14 @@ const RSVP = ({ weddingSlug, type = 'wedding' }) => {
     }
   }
 
+  const backgrounds = {
+    wedding: 'https://www.transparenttextures.com/patterns/handmade-paper.png',
+    birthday: 'https://www.transparenttextures.com/patterns/circle-blues.png',
+    meeting: 'https://www.transparenttextures.com/patterns/subtle-dots.png',
+    event: 'https://www.transparenttextures.com/patterns/tiny-grid.png'
+  }
+  const currentBg = backgrounds[type] || backgrounds.wedding
+
   return (
     <section className="section rsvp-section">
       <div className="container">
@@ -98,7 +106,7 @@ const RSVP = ({ weddingSlug, type = 'wedding' }) => {
                 ></textarea>
               </div>
               <button type="submit" className="btn-premium">
-                Kirim Pesan <Send size={16} />
+                Kirim Pesat <Send size={16} />
               </button>
             </form>
           </motion.div>
@@ -126,7 +134,14 @@ const RSVP = ({ weddingSlug, type = 'wedding' }) => {
       </div>
 
       <style>{`
-        .rsvp-section { background-color: var(--white); }
+        .rsvp-section { 
+          background-color: var(--white);
+          background-image: url('${currentBg}');
+          background-repeat: repeat;
+          background-attachment: fixed;
+          position: relative;
+        }
+        .container { position: relative; z-index: 1; }
         .rsvp-layout {
           display: grid;
           grid-template-columns: 1fr 1fr;

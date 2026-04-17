@@ -21,7 +21,14 @@ const EventInfo = ({ events = [], type = 'wedding' }) => {
     ]
   }
 
-  const defaultEvents = presets[type] || presets.wedding
+  const backgrounds = {
+    wedding: bgImage, // Floral pattern
+    birthday: 'https://www.transparenttextures.com/patterns/food-patterns.png',
+    meeting: 'https://www.transparenttextures.com/patterns/graphy.png',
+    event: 'https://www.transparenttextures.com/patterns/bright-squares.png'
+  }
+
+  const currentBg = backgrounds[type] || bgImage
 
   return (
     <section className="section info-section">
@@ -69,11 +76,21 @@ const EventInfo = ({ events = [], type = 'wedding' }) => {
 
       <style>{`
         .info-section {
-          background-image: url('${bgImage}');
-          background-size: cover;
+          background-image: url('${currentBg}');
+          background-size: initial;
+          background-repeat: repeat;
           background-attachment: fixed;
           background-position: center;
+          position: relative;
         }
+        .info-section::before {
+          content: '';
+          position: absolute;
+          top: 0; left: 0; right: 0; bottom: 0;
+          background: rgba(var(--bg-cream-rgb), 0.3);
+          z-index: 0;
+        }
+        .container { position: relative; z-index: 1; }
         .info-grid {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
