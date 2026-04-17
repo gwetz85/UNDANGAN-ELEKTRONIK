@@ -248,7 +248,8 @@ function InvitationPage() {
             />
           )}
 
-          <div id="youtube-player" style={{ display: 'none' }}></div>
+
+
 
           <div className="music-control">
             <button 
@@ -367,6 +368,7 @@ function InvitationPage() {
         }
         .status-container h2 { color: var(--primary); }
       `}</style>
+      <div id="youtube-player" style={{ display: 'none' }}></div>
     </div>
   )
 }
