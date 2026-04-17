@@ -181,7 +181,9 @@ function InvitationPage() {
           <MotionSection><Countdown targetDate={config.weddingDate} /></MotionSection>
           <MotionSection><EventInfo events={config.events} type={eventType} /></MotionSection>
           <MotionSection><Gallery photos={config.gallery} /></MotionSection>
-          <MotionSection><Gift accounts={config.bankAccounts} type={eventType} /></MotionSection>
+          {['wedding', 'birthday'].includes(eventType) && (
+            <MotionSection><Gift accounts={config.bankAccounts} type={eventType} /></MotionSection>
+          )}
           <MotionSection><RSVP weddingSlug={weddingSlug} type={eventType} /></MotionSection>
           <MotionSection><Footer names={config.coupleNames} type={eventType} /></MotionSection>
 
