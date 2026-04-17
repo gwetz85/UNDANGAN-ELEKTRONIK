@@ -27,7 +27,8 @@ const AdminPage = () => {
     hero: { title: '', description: '', image: '' },
     events: [],
     bankAccounts: [],
-    gallery: []
+    gallery: [],
+    template: 'classic'
   })
 
   useEffect(() => {
@@ -106,7 +107,8 @@ const AdminPage = () => {
       await set(ref(db, `weddings/${slug}/config`), {
         coupleNames: newWedding.coupleNames,
         weddingDate: new Date().toISOString().split('T')[0] + 'T09:00:00',
-        hero: { title: 'MAHA SUCI ALLAH', description: 'Atas izin-Mu, kami mengundang Anda untuk merayakan hari bahagia kami.' }
+        hero: { title: 'MAHA SUCI ALLAH', description: 'Atas izin-Mu, kami mengundang Anda untuk merayakan hari bahagia kami.' },
+        template: 'classic'
       })
       setShowCreateModal(false)
       setNewWedding({ slug: '', coupleNames: '' })
@@ -374,6 +376,20 @@ const AdminPage = () => {
                         value={config.coverImage} 
                         onChange={(e) => setConfig({...config, coverImage: e.target.value})}
                       />
+                    </div>
+                    <div className="form-group">
+                      <label>Pilih Template Undangan</label>
+                      <select 
+                        value={config.template || 'classic'} 
+                        onChange={(e) => setConfig({...config, template: e.target.value})}
+                        className="template-select"
+                      >
+                        <option value="classic">Classic Gold (Timeless)</option>
+                        <option value="modern">Modern Royal (Dark Mode)</option>
+                        <option value="nature">Nature Forest (Organic)</option>
+                        <option value="romantic">Romantic Pink (Soft)</option>
+                        <option value="vintage">Vintage (Antique)</option>
+                      </select>
                     </div>
                   </div>
                 </div>
