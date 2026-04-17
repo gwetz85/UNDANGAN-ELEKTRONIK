@@ -6,7 +6,7 @@ import { db } from '../firebase'
 import { ref, onValue } from 'firebase/database'
 import Hero from '../components/Hero'
 import Countdown from '../components/Countdown'
-import WeddingInfo from '../components/WeddingInfo'
+import EventInfo from '../components/EventInfo'
 import Gallery from '../components/Gallery'
 import RSVP from '../components/RSVP'
 import Gift from '../components/Gift'
@@ -163,7 +163,7 @@ function InvitationPage() {
         >
           <MotionSection><Hero data={config.hero} type={eventType} /></MotionSection>
           <MotionSection><Countdown targetDate={config.weddingDate} /></MotionSection>
-          <MotionSection><WeddingInfo events={config.events} /></MotionSection>
+          <MotionSection><EventInfo events={config.events} type={eventType} /></MotionSection>
           <MotionSection><Gallery photos={config.gallery} /></MotionSection>
           <MotionSection><Gift accounts={config.bankAccounts} type={eventType} /></MotionSection>
           <MotionSection><RSVP weddingSlug={weddingSlug} type={eventType} /></MotionSection>

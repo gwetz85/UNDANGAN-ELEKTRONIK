@@ -2,23 +2,26 @@ import { motion } from 'framer-motion'
 import { Calendar, MapPin, Clock } from 'lucide-react'
 import bgImage from '../assets/bg.png'
 
-const WeddingInfo = ({ events = [] }) => {
-  const defaultEvents = [
-    {
-      title: 'Akad Nikah',
-      date: 'Minggu, 31 Desember 2026',
-      time: '09:00 - 11:00 WIB',
-      location: 'Kediaman Mempelai Wanita, Jl. Mawar No. 123, Jakarta',
-      mapUrl: 'https://www.google.com/maps/search/?api=1&query=Jl.+Mawar+No.+123+Jakarta'
-    },
-    {
-      title: 'Resepsi',
-      date: 'Minggu, 31 Desember 2026',
-      time: '12:00 - 16:00 WIB',
-      location: 'Grand Ballroom Hotel Mulia, Jakarta',
-      mapUrl: 'https://www.google.com/maps/search/?api=1&query=Hotel+Mulia+Jakarta'
-    }
-  ]
+const EventInfo = ({ events = [], type = 'wedding' }) => {
+  const presets = {
+    wedding: [
+      { title: 'Akad Nikah', date: 'Minggu, 31 Desember 2026', time: '09:00 - 11:00 WIB', location: 'Kediaman Mempelai Wanita', mapUrl: '#' },
+      { title: 'Resepsi', date: 'Minggu, 31 Desember 2026', time: '12:00 - 16:00 WIB', location: 'Grand Ballroom Hotel', mapUrl: '#' }
+    ],
+    birthday: [
+      { title: 'Tiup Lilin & Doa', date: 'Sabtu, 15 Mei 2026', time: '16:00 - 18:00 WIB', location: 'Kediaman Utama', mapUrl: '#' },
+      { title: 'Ramah Tamah', date: 'Sabtu, 15 Mei 2026', time: '18:00 - Selesai', location: 'Halaman Belakang', mapUrl: '#' }
+    ],
+    meeting: [
+      { title: 'Sesi Pembukaan', date: 'Senin, 10 Juni 2026', time: '09:00 - 10:00 WIB', location: 'Ruang Rapat Utama', mapUrl: '#' },
+      { title: 'Diskusi & Tanya Jawab', date: 'Senin, 10 Juni 2026', time: '10:00 - 12:00 WIB', location: 'Ruang Rapat Utama', mapUrl: '#' }
+    ],
+    event: [
+      { title: 'Acara Utama', date: 'Jumat, 20 Juli 2026', time: '19:00 - Selesai', location: 'Venue Utama', mapUrl: '#' }
+    ]
+  }
+
+  const defaultEvents = presets[type] || presets.wedding
 
   return (
     <section className="section info-section">
@@ -114,4 +117,4 @@ const WeddingInfo = ({ events = [] }) => {
   )
 }
 
-export default WeddingInfo
+export default EventInfo

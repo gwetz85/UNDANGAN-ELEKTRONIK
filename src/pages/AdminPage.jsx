@@ -100,6 +100,54 @@ const AdminPage = () => {
     navigate('/login')
   }
 
+  const getInitialConfig = (type, coupleNames) => {
+    const presets = {
+      wedding: {
+        hero: { title: 'MAHA SUCI ALLAH', description: 'Atas izin-Mu, kami mengundang Anda untuk merayakan hari bahagia kami.' },
+        events: [
+          { title: 'Akad Nikah', date: 'Tentukan Tanggal', time: '09:00 - 11:00 WIB', location: 'Lokasi Akad', mapUrl: '#' },
+          { title: 'Resepsi', date: 'Tentukan Tanggal', time: '12:00 - 16:00 WIB', location: 'Gedung Pertemuan', mapUrl: '#' }
+        ]
+      },
+      birthday: {
+        hero: { title: 'HAPPY BIRTHDAY', description: 'Terima kasih telah menemani perjalanan hidup saya hingga saat ini.' },
+        events: [
+          { title: 'Tiup Lilin & Doa', date: 'Tentukan Tanggal', time: '16:00 - 18:00 WIB', location: 'Kediaman', mapUrl: '#' },
+          { title: 'Makan Bersama', date: 'Tentukan Tanggal', time: '18:00 - Selesai', location: 'Restoran/Kediaman', mapUrl: '#' }
+        ]
+      },
+      meeting: {
+        hero: { title: 'OFFICIAL MEETING', description: 'Sinergi dan kolaborasi untuk mencapai tujuan bersama.' },
+        events: [
+          { title: 'Sesi Pembukaan', date: 'Tentukan Tanggal', time: '09:00 - 10:00 WIB', location: 'Ruang Rapat', mapUrl: '#' },
+          { title: 'Diskusi Utama', date: 'Tentukan Tanggal', time: '10:00 - 12:00 WIB', location: 'Ruang Rapat', mapUrl: '#' }
+        ]
+      },
+      event: {
+        hero: { title: 'SPECIAL EVENT', description: 'Mari bergabung dan rayakan momen spesial ini bersama kami.' },
+        events: [
+          { title: 'Acara Utama', date: 'Tentukan Tanggal', time: '19:00 - Selesai', location: 'Venue Utama', mapUrl: '#' }
+        ]
+      }
+    }
+
+    const base = presets[type] || presets.wedding
+    return {
+      coupleNames,
+      weddingDate: new Date().toISOString().split('T')[0] + 'T09:00:00',
+      hero: base.hero,
+      events: base.events,
+      template: 'classic',
+      fontPairing: 'classic',
+      animationStyle: 'fade',
+      type: type,
+      musicUrl: '',
+      coverImage: '',
+      bankAccounts: [],
+      gallery: []
+    }
+  }
+
   const handleCreateWedding = async (e) => {
     e.preventDefault()
     if (!newWedding.slug || !newWedding.coupleNames) return
@@ -107,15 +155,8 @@ const AdminPage = () => {
     
     setIsSaving(true)
     try {
-      await set(ref(db, `weddings/${slug}/config`), {
-        coupleNames: newWedding.coupleNames,
-        weddingDate: new Date().toISOString().split('T')[0] + 'T09:00:00',
-        hero: { title: 'MAHA SUCI ALLAH', description: 'Atas izin-Mu, kami mengundang Anda untuk merayakan hari bahagia kami.' },
-        template: 'classic',
-        fontPairing: 'classic',
-        animationStyle: 'fade',
-        type: newWedding.type || 'wedding'
-      })
+      const initialConfig = getInitialConfig(newWedding.type || 'wedding', newWedding.coupleNames)
+      await set(ref(db, `weddings/${slug}/config`), initialConfig)
       setShowCreateModal(false)
       setNewWedding({ slug: '', coupleNames: '' })
       navigate(`/admin/${slug}`)
