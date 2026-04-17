@@ -11,7 +11,7 @@ import Gallery from '../components/Gallery'
 import RSVP from '../components/RSVP'
 import Gift from '../components/Gift'
 import Footer from '../components/Footer'
-import { getDirectImageUrl } from '../utils/url'
+import { getDirectImageUrl, getYoutubeId } from '../utils/url'
 import { useRef } from 'react'
 import bgImage from '../assets/bg.png'
 
@@ -22,7 +22,9 @@ function InvitationPage() {
   const [guestName, setGuestName] = useState('Tamu Undangan')
   const [weddingData, setWeddingData] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [ytPlayer, setYtPlayer] = useState(null)
   const audioRef = useRef(null)
+  const ytPlayerRef = useRef(null)
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -39,19 +41,69 @@ function InvitationPage() {
     return () => unsubscribe()
   }, [weddingSlug])
 
+  const musicUrl = weddingData?.config?.musicUrl || "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+  const youtubeId = getYoutubeId(musicUrl)
+
+  useEffect(() => {
+    if (youtubeId && !window.YT) {
+      const tag = document.createElement('script')
+      tag.src = 'https://www.youtube.com/iframe_api'
+      const firstScriptTag = document.getElementsByTagName('script')[0]
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag)
+
+      window.onYouTubeIframeAPIReady = () => {
+        new window.YT.Player('youtube-player', {
+          videoId: youtubeId,
+          playerVars: {
+            autoplay: 0,
+            controls: 0,
+            loop: 1,
+            playlist: youtubeId
+          },
+          events: {
+            onReady: (event) => setYtPlayer(event.target)
+          }
+        })
+      }
+    } else if (youtubeId && window.YT && window.YT.Player) {
+      new window.YT.Player('youtube-player', {
+        videoId: youtubeId,
+        playerVars: {
+          autoplay: 0,
+          controls: 0,
+          loop: 1,
+          playlist: youtubeId
+        },
+        events: {
+          onReady: (event) => setYtPlayer(event.target)
+        }
+      })
+    }
+  }, [youtubeId])
+
   const handleOpen = () => {
     setIsOpen(true)
     setIsPlaying(true)
-    if (audioRef.current) {
+    if (youtubeId && ytPlayer) {
+      ytPlayer.playVideo()
+    } else if (audioRef.current) {
       audioRef.current.play().catch(e => console.log("Audio play failed:", e))
     }
   }
 
   const toggleMusic = () => {
     if (isPlaying) {
-      audioRef.current.pause()
+      if (youtubeId && ytPlayer) {
+        ytPlayer.pauseVideo()
+      } else if (audioRef.current) {
+        audioRef.current.pause()
+      }
     } else {
-      audioRef.current.play()
+      if (youtubeId && ytPlayer) {
+        ytPlayer.playVideo()
+      } else if (audioRef.current) {
+        audioRef.current.play()
+      }
     }
     setIsPlaying(!isPlaying)
   }
@@ -188,11 +240,15 @@ function InvitationPage() {
           <MotionSection><RSVP weddingSlug={weddingSlug} type={eventType} /></MotionSection>
           <MotionSection><Footer names={config.coupleNames} type={eventType} /></MotionSection>
 
-          <audio 
-            ref={audioRef}
-            src={config.musicUrl || "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"} 
-            loop 
-          />
+          {!youtubeId && (
+            <audio 
+              ref={audioRef}
+              src={musicUrl} 
+              loop 
+            />
+          )}
+
+          <div id="youtube-player" style={{ display: 'none' }}></div>
 
           <div className="music-control">
             <button 
