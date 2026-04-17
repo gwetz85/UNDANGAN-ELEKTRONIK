@@ -17,6 +17,54 @@
   --shadow-premium: 0 20px 40px rgba(0, 0, 0, 0.05);
 }
 
+/* Modern Royal Theme */
+[data-theme='modern'] {
+  --primary: #d4af37;
+  --primary-light: #f6e05e;
+  --secondary: #1e293b;
+  --bg-cream: #0f172a;
+  --text-dark: #f8fafc;
+  --text-light: #94a3b8;
+  --white: #1e293b;
+  --gold-gradient: linear-gradient(135deg, #d4af37 0%, #f6e05e 50%, #d4af37 100%);
+}
+
+/* Nature Forest Theme */
+[data-theme='nature'] {
+  --primary: #6b705c;
+  --primary-light: #a3b18a;
+  --secondary: #3a5a40;
+  --bg-cream: #f0ead6;
+  --text-dark: #3a5a40;
+  --text-light: #6b705c;
+  --white: #ffffff;
+  --gold-gradient: linear-gradient(135deg, #6b705c 0%, #a3b18a 50%, #6b705c 100%);
+}
+
+/* Romantic Pink Theme */
+[data-theme='romantic'] {
+  --primary: #e5989b;
+  --primary-light: #ffb4a2;
+  --secondary: #6d597a;
+  --bg-cream: #fff1f2;
+  --text-dark: #6d597a;
+  --text-light: #b56576;
+  --white: #ffffff;
+  --gold-gradient: linear-gradient(135deg, #e5989b 0%, #ffb4a2 50%, #e5989b 100%);
+}
+
+/* Vintage Theme */
+[data-theme='vintage'] {
+  --primary: #8c7851;
+  --primary-light: #c6ac8f;
+  --secondary: #5e503f;
+  --bg-cream: #f3e9dc;
+  --text-dark: #5e503f;
+  --text-light: #8c7851;
+  --white: #f8f1e9;
+  --gold-gradient: linear-gradient(135deg, #8c7851 0%, #c6ac8f 50%, #8c7851 100%);
+}
+
 * {
   margin: 0;
   padding: 0;

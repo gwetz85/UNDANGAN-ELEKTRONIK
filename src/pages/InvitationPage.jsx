@@ -74,17 +74,27 @@ function InvitationPage() {
     )
   }
 
-  const { theme = {}, config = {} } = weddingData
+  const { theme: customTheme = {}, config = {} } = weddingData || {}
+  const template = config.template || 'classic'
+
+  // Animation Variants based on Template
+  const exitVariants = {
+    classic: { opacity: 0, y: '-100%', transition: { duration: 1, ease: 'easeInOut' } },
+    modern: { opacity: 0, scale: 0.8, filter: 'blur(10px)', transition: { duration: 0.8 } },
+    nature: { opacity: 0, x: '100%', transition: { duration: 1, ease: 'circIn' } },
+    romantic: { opacity: 0, scale: 1.2, rotate: 5, transition: { duration: 1.2 } },
+    vintage: { opacity: 0, filter: 'sepia(1) contrast(0.5)', transition: { duration: 1.5 } }
+  }
 
   return (
-    <div className="app-container">
-      <AnimatePresence>
+    <div className="app-container" data-theme={template}>
+      <AnimatePresence mode="wait">
         {!isOpen && (
           <motion.div 
-            className="cover-overlay glass"
+            key="cover"
+            className="cover-overlay"
             initial={{ opacity: 1 }}
-            exit={{ opacity: 0, y: '-100%' }}
-            transition={{ duration: 1, ease: "easeInOut" }}
+            exit={exitVariants[template] || exitVariants.classic}
             style={{ backgroundImage: `url(${config.coverImage || bgImage})` }}
           >
             <div className="cover-content">
