@@ -573,20 +573,16 @@ const AdminPage = () => {
                 {/* Gallery Settings */}
                 <div className="card glass">
                   <div className="card-header">
-                    <h3>Galeri Foto (Berjalan/Marquee)</h3>
+                    <h3>Galeri Foto</h3>
                   </div>
                   <div className="form-group">
-                    <label>URL Foto (Satu URL per baris). Gunakan direct link atau link Google Drive.</label>
+                    <label>URL Foto (Satu URL per baris)</label>
                     <textarea 
                       value={config.gallery.join('\n')} 
-                      onChange={(e) => setConfig({...config, gallery: e.target.value.split('\n').filter(url => url.trim() !== '')})}
-                      placeholder="Contoh: https://drive.google.com/file/d/ID/view"
+                      onChange={(e) => setConfig({...config, gallery: e.target.value.split('\n')})}
+                      placeholder="https://example.com/photo1.jpg"
                       rows="8"
                     />
-                    <small style={{ color: '#666', marginTop: '10px', display: 'block' }}>
-                      Tip: Untuk Google Drive, pastikan file diset "Anyone with the link can view". 
-                      Aplikasi akan otomatis mengubah link menjadi format gambar yang bisa ditampilkan.
-                    </small>
                   </div>
                 </div>
 

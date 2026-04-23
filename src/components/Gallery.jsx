@@ -8,15 +8,22 @@ import bg from '../assets/bg.png'
 import { getDirectImageUrl } from '../utils/url'
 
 const Gallery = ({ photos = [] }) => {
-  const defaultPhotos = [g1, g2, g3, g4, couple, bg]
-  const displayPhotos = (photos?.length > 0 ? photos : defaultPhotos).map(src => getDirectImageUrl(src))
+  const defaultPhotos = [
+    g1,
+    g2,
+    g3,
+    g4,
+    couple,
+    bg,
+  ]
 
-  // Duplicate photos for infinite marquee effect
-  const marqueePhotos = [...displayPhotos, ...displayPhotos, ...displayPhotos]
+  const displayPhotos = (photos?.filter(src => src.trim() !== '').length > 0 
+    ? photos.filter(src => src.trim() !== '') 
+    : defaultPhotos).map(src => getDirectImageUrl(src))
 
   return (
     <section className="section gallery-section">
-      <div className="gallery-header">
+      <div className="container">
         <motion.h2 
           className="section-title"
           initial={{ opacity: 0, y: 20 }}
@@ -24,76 +31,58 @@ const Gallery = ({ photos = [] }) => {
         >
           Momen Spesial
         </motion.h2>
-      </div>
-
-      <div className="marquee-container">
-        <motion.div 
-          className="marquee-track"
-          animate={{ x: [0, -100 * displayPhotos.length] }}
-          transition={{ 
-            duration: displayPhotos.length * 5, // Speed adjustment
-            repeat: Infinity, 
-            ease: "linear" 
-          }}
-        >
-          {marqueePhotos.map((src, index) => (
-            <div key={index} className="gallery-item">
-              <img src={src} alt={`Gallery ${index}`} loading="lazy" />
-            </div>
+        
+        <div className="gallery-grid">
+          {displayPhotos.map((src, index) => (
+            <motion.div 
+              key={index}
+              className="gallery-item"
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ delay: index * 0.1 }}
+              whileHover={{ scale: 1.05, zIndex: 1 }}
+            >
+              <img src={src} alt={`Gallery ${index}`} />
+            </motion.div>
           ))}
-        </motion.div>
+        </div>
       </div>
 
       <style>{`
         .gallery-section {
           background-color: transparent !important;
-          padding: 80px 0;
-          overflow: hidden;
-        }
-        .gallery-header {
-          padding: 0 20px;
-          margin-bottom: 40px;
         }
         .section-title {
           font-size: 2.5rem;
+          margin-bottom: 50px;
           color: var(--secondary);
           text-align: center;
         }
-        .marquee-container {
-          width: 100%;
-          overflow: hidden;
-          position: relative;
-          padding: 20px 0;
-        }
-        .marquee-track {
-          display: flex;
-          gap: 20px;
-          width: max-content;
+        .gallery-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+          gap: 15px;
+          padding: 10px;
         }
         .gallery-item {
-          width: 300px;
-          height: 400px;
-          flex-shrink: 0;
-          border-radius: 20px;
+          aspect-ratio: 1/1;
           overflow: hidden;
-          box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+          border-radius: 10px;
+          cursor: pointer;
+          box-shadow: 0 4px 15px rgba(0,0,0,0.1);
           border: 4px solid white;
         }
         .gallery-item img {
           width: 100%;
           height: 100%;
           object-fit: cover;
-          transition: transform 0.5s ease;
+          transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .gallery-item:hover img {
           transform: scale(1.1);
         }
-        @media (max-width: 768px) {
-          .gallery-item {
-            width: 200px;
-            height: 280px;
-          }
-          .section-title { font-size: 2rem; }
+        @media (max-width: 600px) {
+          .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
         }
       `}</style>
     </section>

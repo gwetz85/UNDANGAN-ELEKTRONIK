@@ -44,7 +44,7 @@ const Footer = ({ names, footerText, type = 'wedding' }) => {
           </div>
 
           <div className="copyright">
-            <p>&copy; 2026 {footerText || 'TARUNA BANGSA TANJUNGPINANG TEAM'}. Created with ❤️</p>
+            <p>&copy; 2026 {footerText || 'TARUNA BANGSA TANJUNGPINANG TEAM'}</p>
           </div>
         </motion.div>
       </div>
