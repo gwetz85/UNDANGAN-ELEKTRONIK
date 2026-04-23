@@ -138,6 +138,7 @@ const AdminPage = () => {
       hero: base.hero,
       events: base.events,
       notes: '',
+      footerText: 'TARUNA BANGSA TANJUNGPINANG TEAM',
       template: 'classic',
       fontPairing: 'classic',
       animationStyle: 'fade',
@@ -597,6 +598,22 @@ const AdminPage = () => {
                       onChange={(e) => setConfig({...config, notes: e.target.value})}
                       placeholder="Masukkan catatan penting di sini..."
                       rows="8"
+                    />
+                  </div>
+                </div>
+
+                {/* Footer Settings */}
+                <div className="card glass">
+                  <div className="card-header">
+                    <h3>Pengaturan Footer / Copyright</h3>
+                  </div>
+                  <div className="form-group">
+                    <label>Teks Copyright (Contoh: Nama Team / Brand)</label>
+                    <input 
+                      type="text"
+                      value={config.footerText || ''} 
+                      onChange={(e) => setConfig({...config, footerText: e.target.value})}
+                      placeholder="TARUNA BANGSA TANJUNGPINANG TEAM"
                     />
                   </div>
                 </div>

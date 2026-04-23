@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 
-const Footer = ({ names, type = 'wedding' }) => {
+const Footer = ({ names, footerText, type = 'wedding' }) => {
   const labels = {
     wedding: { 
       quote: '"Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya, dan Dia menjadikan di antaramu rasa kasih dan sayang."',
@@ -44,7 +44,7 @@ const Footer = ({ names, type = 'wedding' }) => {
           </div>
 
           <div className="copyright">
-            <p>&copy; 2026 Undangan Digital Premium. Created with ❤️</p>
+            <p>&copy; 2026 {footerText || 'TARUNA BANGSA TANJUNGPINANG TEAM'}. Created with ❤️</p>
           </div>
         </motion.div>
       </div>

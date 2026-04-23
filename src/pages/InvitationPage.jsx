@@ -281,7 +281,7 @@ function InvitationPage() {
               <MotionSection><Gift accounts={config.bankAccounts} type={eventType} /></MotionSection>
             )}
             <MotionSection><RSVP weddingSlug={weddingSlug} type={eventType} /></MotionSection>
-            <MotionSection><Footer names={config.coupleNames} type={eventType} /></MotionSection>
+            <MotionSection><Footer names={config.coupleNames} footerText={config.footerText} type={eventType} /></MotionSection>
           </div>
 
           {!youtubeId && (

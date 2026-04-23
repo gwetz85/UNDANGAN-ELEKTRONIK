@@ -69,11 +69,11 @@ const RSVP = ({ weddingSlug, type = 'wedding' }) => {
   return (
     <section className="section rsvp-section">
       <div className="container">
-        <div className="rsvp-layout">
+        <div className="rsvp-single-layout">
           <motion.div 
             className="rsvp-form-container glass"
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
           >
             <h3>{currentLabels.title}</h3>
             <form onSubmit={handleSubmit}>
@@ -106,29 +106,9 @@ const RSVP = ({ weddingSlug, type = 'wedding' }) => {
                 ></textarea>
               </div>
               <button type="submit" className="btn-premium">
-                Kirim Pesat <Send size={16} />
+                Kirim Pesan <Send size={16} />
               </button>
             </form>
-          </motion.div>
-
-          <motion.div 
-            className="wishes-container"
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-          >
-            <h3>{currentLabels.wishTitle}</h3>
-            <div className="wishes-list">
-              {wishes.map((wish, index) => (
-                <div key={index} className="wish-card glass">
-                  <div className="wish-header">
-                    <strong>{wish.name}</strong>
-                    <span className="attendance-tag">{wish.attendance}</span>
-                  </div>
-                  <p>{wish.message}</p>
-                  <small>{wish.date}</small>
-                </div>
-              ))}
-            </div>
           </motion.div>
         </div>
       </div>
@@ -139,15 +119,19 @@ const RSVP = ({ weddingSlug, type = 'wedding' }) => {
           position: relative;
         }
         .container { position: relative; z-index: 1; }
-        .rsvp-layout {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 50px;
-          text-align: left;
+        .rsvp-single-layout {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 100%;
         }
-        .rsvp-form-container, .wishes-container {
+        .rsvp-form-container {
           padding: 40px;
-          border-radius: 20px;
+          border-radius: 25px;
+          max-width: 600px;
+          width: 100%;
+          text-align: center;
+          background: white !important; /* Force white background for visibility */
         }
         h3 {
           font-size: 1.8rem;
