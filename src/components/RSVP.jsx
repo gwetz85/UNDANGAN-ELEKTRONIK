@@ -128,10 +128,11 @@ const RSVP = ({ weddingSlug, type = 'wedding' }) => {
         .rsvp-form-container {
           padding: 40px;
           border-radius: 25px;
-          max-width: 600px;
+          max-width: 800px;
           width: 100%;
           text-align: center;
           background: white !important; /* Force white background for visibility */
+          box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         }
         h3 {
           font-size: 1.8rem;

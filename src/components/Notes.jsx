@@ -40,10 +40,10 @@ const Notes = ({ notes = [], type = 'meeting' }) => {
           background: transparent !important;
         }
         .notes-container {
-          padding: 40px 30px;
+          padding: 40px;
           border-radius: 30px;
           text-align: left;
-          max-width: 650px;
+          max-width: 800px;
           margin: 0 auto;
           border: 1px solid rgba(184, 134, 11, 0.1);
           background: white !important; /* Force white background for contrast */
@@ -52,13 +52,13 @@ const Notes = ({ notes = [], type = 'meeting' }) => {
         .notes-header {
           display: flex;
           align-items: center;
-          gap: 12px;
-          margin-bottom: 20px;
+          gap: 15px;
+          margin-bottom: 25px;
           padding-bottom: 15px;
           border-bottom: 1px solid rgba(184, 134, 11, 0.1);
         }
         .notes-header h2 {
-          font-size: 1.6rem;
+          font-size: 1.8rem;
           color: var(--primary);
           margin: 0;
         }
@@ -68,8 +68,8 @@ const Notes = ({ notes = [], type = 'meeting' }) => {
         .note-text-wrapper {
           display: flex;
           align-items: flex-start;
-          gap: 12px;
-          padding: 15px;
+          gap: 15px;
+          padding: 20px;
           background: rgba(184, 134, 11, 0.05);
           border-radius: 15px;
         }
