@@ -105,39 +105,32 @@ const EventInfo = ({ events = [], type = 'wedding' }) => {
                       </div>
                     </div>
 
-                    {(embedUrl || event.mapImage || (event.mapUrl && event.mapUrl !== '#')) && (
+                    {(event.mapUrl && event.mapUrl !== '#') ? (
                       <div className="card-map-section">
-                        {embedUrl ? (
-                          <div className="map-iframe-container">
-                            <iframe 
-                              src={embedUrl}
-                              width="100%" 
-                              height="100%" 
-                              style={{ border: 0, borderRadius: '15px', minHeight: '200px' }} 
-                              allowFullScreen="" 
-                              loading="lazy" 
-                              referrerPolicy="no-referrer-when-downgrade"
-                            ></iframe>
+                        <div className="qr-preview" onClick={() => window.open(event.mapUrl, '_blank')}>
+                          <div className="qr-wrapper">
+                            <img 
+                              src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(event.mapUrl)}&margin=10`} 
+                              alt="QR Code Lokasi" 
+                            />
                           </div>
-                        ) : event.mapImage ? (
-                          <div className="map-preview" onClick={() => window.open(event.mapUrl, '_blank')}>
-                            <img src={getDirectImageUrl(event.mapImage)} alt="Map Preview" />
-                            <div className="map-overlay">
-                              <ExternalLink size={24} />
-                              <span>Buka Peta</span>
-                            </div>
+                          <div className="qr-text">
+                            <span className="scan-text">Scan untuk Lokasi</span>
+                            <span className="click-text">atau klik di sini</span>
                           </div>
-                        ) : (
-                          <div className="map-preview fallback" onClick={() => window.open(event.mapUrl, '_blank')}>
-                            <MapPin size={40} className="fallback-icon" />
-                            <div className="map-overlay">
-                              <ExternalLink size={24} />
-                              <span>Buka Peta</span>
-                            </div>
-                          </div>
-                        )}
+                        </div>
                       </div>
-                    )}
+                    ) : event.mapImage ? (
+                      <div className="card-map-section">
+                        <div className="map-preview" onClick={() => window.open(event.mapUrl || '#', '_blank')}>
+                          <img src={getDirectImageUrl(event.mapImage)} alt="Map Preview" />
+                          <div className="map-overlay">
+                            <ExternalLink size={24} />
+                            <span>Buka Peta</span>
+                          </div>
+                        </div>
+                      </div>
+                    ) : null}
                   </div>
                 </div>
               </motion.div>
@@ -252,17 +245,52 @@ const EventInfo = ({ events = [], type = 'wedding' }) => {
           flex-direction: column;
           height: 100%;
         }
-        .map-iframe-container {
-          flex: 1;
+        .qr-preview {
+          background: white;
           border-radius: 15px;
-          overflow: hidden;
-          box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+          padding: 15px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 15px;
           height: 100%;
+          border: 1px solid rgba(184, 134, 11, 0.2);
+          cursor: pointer;
+          transition: var(--transition-smooth);
           min-height: 200px;
         }
-        .map-iframe-container iframe {
+        .qr-preview:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+          border-color: var(--primary);
+        }
+        .qr-wrapper {
+          width: 140px;
+          height: 140px;
+          background: white;
+          border-radius: 10px;
+          overflow: hidden;
+        }
+        .qr-wrapper img {
+          width: 100%;
           height: 100%;
-          min-height: 200px;
+          object-fit: contain;
+        }
+        .qr-text {
+          text-align: center;
+          display: flex;
+          flex-direction: column;
+        }
+        .qr-text .scan-text {
+          font-weight: 700;
+          color: var(--primary);
+          font-size: 0.95rem;
+        }
+        .qr-text .click-text {
+          font-size: 0.75rem;
+          color: #718096;
+          margin-top: 4px;
         }
         .map-preview {
           position: relative;
@@ -283,10 +311,6 @@ const EventInfo = ({ events = [], type = 'wedding' }) => {
           object-fit: cover;
           position: absolute;
           top: 0; left: 0;
-        }
-        .map-preview.fallback .fallback-icon {
-          color: var(--primary);
-          opacity: 0.5;
         }
         .map-overlay {
           position: absolute;
@@ -328,8 +352,8 @@ const EventInfo = ({ events = [], type = 'wedding' }) => {
           .info-grid.single-event .card-body-inner {
             grid-template-columns: 1fr;
           }
-          .map-preview, .map-iframe-container iframe {
-            min-height: 150px;
+          .map-preview, .qr-preview {
+            min-height: 180px;
           }
         }
       `}</style>
