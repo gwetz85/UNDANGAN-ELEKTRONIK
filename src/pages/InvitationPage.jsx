@@ -11,6 +11,7 @@ import Gallery from '../components/Gallery'
 import RSVP from '../components/RSVP'
 import Gift from '../components/Gift'
 import Footer from '../components/Footer'
+import Notes from '../components/Notes'
 import { getDirectImageUrl, getYoutubeId } from '../utils/url'
 import { useRef } from 'react'
 import bgImage from '../assets/bg.png'
@@ -267,6 +268,7 @@ function InvitationPage() {
           <MotionSection><Hero data={config.hero} type={eventType} /></MotionSection>
           <MotionSection><Countdown targetDate={config.weddingDate} /></MotionSection>
           <MotionSection><EventInfo events={config.events} type={eventType} /></MotionSection>
+          <MotionSection><Notes notes={config.notes} type={eventType} /></MotionSection>
           <MotionSection><Gallery photos={config.gallery} /></MotionSection>
           {['wedding', 'birthday'].includes(eventType) && (
             <MotionSection><Gift accounts={config.bankAccounts} type={eventType} /></MotionSection>

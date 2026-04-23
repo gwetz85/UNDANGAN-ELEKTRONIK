@@ -137,6 +137,7 @@ const AdminPage = () => {
       weddingDate: new Date().toISOString().split('T')[0] + 'T09:00:00',
       hero: base.hero,
       events: base.events,
+      notes: [],
       template: 'classic',
       fontPairing: 'classic',
       animationStyle: 'fade',
@@ -579,6 +580,22 @@ const AdminPage = () => {
                       value={config.gallery.join('\n')} 
                       onChange={(e) => setConfig({...config, gallery: e.target.value.split('\n').filter(url => url.trim() !== '')})}
                       placeholder="https://example.com/photo1.jpg"
+                      rows="5"
+                    />
+                  </div>
+                </div>
+
+                {/* Notes Settings */}
+                <div className="card glass">
+                  <div className="card-header">
+                    <h3>Catatan Rapat / Informasi Tambahan</h3>
+                  </div>
+                  <div className="form-group">
+                    <label>Catatan (Satu catatan per baris)</label>
+                    <textarea 
+                      value={config.notes?.join('\n') || ''} 
+                      onChange={(e) => setConfig({...config, notes: e.target.value.split('\n').filter(n => n.trim() !== '')})}
+                      placeholder="Masukkan catatan penting di sini..."
                       rows="5"
                     />
                   </div>
