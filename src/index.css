@@ -26,6 +26,10 @@
 @media (max-width: 768px) {
   [data-font='romantic'] h1 { font-size: 2.5rem; }
   [data-font='romantic'] h2 { font-size: 2rem; }
+  
+  html {
+    font-size: 14px; /* Slightly smaller base font on mobile */
+  }
 }
 
 :root {
@@ -128,11 +132,19 @@ h1, h2, h3, h4 {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
+  width: 100%;
 }
 
 .section {
-  padding: 100px 0;
+  padding: 80px 0;
   text-align: center;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 60px 0;
+  }
 }
 
 .btn-premium {
@@ -149,6 +161,19 @@ h1, h2, h3, h4 {
   box-shadow: 0 10px 20px rgba(184, 134, 11, 0.2);
   text-transform: uppercase;
   font-size: 0.9rem;
+  width: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+@media (max-width: 480px) {
+  .btn-premium {
+    padding: 10px 24px;
+    font-size: 0.85rem;
+    width: 100%; /* Full width buttons on very small screens if needed */
+  }
 }
 
 .btn-premium:hover {
@@ -194,6 +219,20 @@ h1, h2, h3, h4 {
 
 @media (max-width: 768px) {
   .container { padding: 0 15px; }
-  .section { padding: 60px 0; }
   .section-header h2 { font-size: 2rem; }
+  
+  /* Prevent horizontal scroll */
+  body {
+    width: 100vw;
+    position: relative;
+  }
+  
+  h1 { font-size: 2.2rem !important; }
+  h2 { font-size: 1.8rem !important; }
+  h3 { font-size: 1.5rem !important; }
+}
+
+@media (max-width: 480px) {
+  h1 { font-size: 1.8rem !important; }
+  .section { padding: 40px 0; }
 }

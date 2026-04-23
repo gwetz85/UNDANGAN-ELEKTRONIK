@@ -35,7 +35,6 @@ const Hero = ({ data = {}, type = 'wedding' }) => {
           initial={{ scale: 1.2, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 2, ease: "easeOut" }}
-          transition={{ duration: 2, ease: "easeOut" }}
           style={{ backgroundImage: `url(${getDirectImageUrl(data.image) || current.image})` }}
         />
         <div className="hero-overlay"></div>
@@ -61,12 +60,13 @@ const Hero = ({ data = {}, type = 'wedding' }) => {
       <style>{`
         .hero-section {
           height: 100vh;
+          height: 100svh; /* Better for mobile browsers */
           position: relative;
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: flex-end;
-          padding-bottom: 100px;
+          padding-bottom: 80px;
           overflow: hidden;
         }
         .hero-image-container {
@@ -88,22 +88,33 @@ const Hero = ({ data = {}, type = 'wedding' }) => {
           bottom: 0;
           left: 0;
           width: 100%;
-          height: 50%;
-          background: linear-gradient(to top, var(--bg-cream) 0%, transparent 100%);
+          height: 60%;
+          background: linear-gradient(to top, var(--bg-cream) 20%, transparent 100%);
         }
         .hero-text {
           text-align: center;
           max-width: 600px;
-          padding: 0 20px;
+          padding: 0 30px;
+          position: relative;
+          z-index: 1;
         }
         .hero-text h4 {
           color: var(--primary);
-          margin-bottom: 20px;
+          margin-bottom: 15px;
           font-weight: 400;
+          letter-spacing: 4px;
+          font-size: 0.9rem;
         }
         .hero-text p {
           color: var(--text-light);
           font-style: italic;
+          font-size: 0.95rem;
+          line-height: 1.6;
+        }
+        @media (max-width: 768px) {
+          .hero-section { padding-bottom: 60px; }
+          .hero-text h4 { font-size: 0.8rem; letter-spacing: 2px; }
+          .hero-text p { font-size: 0.85rem; }
         }
       `}</style>
     </section>

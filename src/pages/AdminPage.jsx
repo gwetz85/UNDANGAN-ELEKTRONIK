@@ -105,28 +105,28 @@ const AdminPage = () => {
       wedding: {
         hero: { title: 'MAHA SUCI ALLAH', description: 'Atas izin-Mu, kami mengundang Anda untuk merayakan hari bahagia kami.' },
         events: [
-          { title: 'Akad Nikah', date: 'Tentukan Tanggal', time: '09:00 - 11:00 WIB', location: 'Lokasi Akad', mapUrl: '#' },
-          { title: 'Resepsi', date: 'Tentukan Tanggal', time: '12:00 - 16:00 WIB', location: 'Gedung Pertemuan', mapUrl: '#' }
+          { title: 'Akad Nikah', date: 'Tentukan Tanggal', time: '09:00 - 11:00 WIB', location: 'Lokasi Akad', mapUrl: '#', locationImage: '', mapImage: '' },
+          { title: 'Resepsi', date: 'Tentukan Tanggal', time: '12:00 - 16:00 WIB', location: 'Gedung Pertemuan', mapUrl: '#', locationImage: '', mapImage: '' }
         ]
       },
       birthday: {
         hero: { title: 'HAPPY BIRTHDAY', description: 'Terima kasih telah menemani perjalanan hidup saya hingga saat ini.' },
         events: [
-          { title: 'Tiup Lilin & Doa', date: 'Tentukan Tanggal', time: '16:00 - 18:00 WIB', location: 'Kediaman', mapUrl: '#' },
-          { title: 'Makan Bersama', date: 'Tentukan Tanggal', time: '18:00 - Selesai', location: 'Restoran/Kediaman', mapUrl: '#' }
+          { title: 'Tiup Lilin & Doa', date: 'Tentukan Tanggal', time: '16:00 - 18:00 WIB', location: 'Kediaman', mapUrl: '#', locationImage: '', mapImage: '' },
+          { title: 'Makan Bersama', date: 'Tentukan Tanggal', time: '18:00 - Selesai', location: 'Restoran/Kediaman', mapUrl: '#', locationImage: '', mapImage: '' }
         ]
       },
       meeting: {
         hero: { title: 'OFFICIAL MEETING', description: 'Sinergi dan kolaborasi untuk mencapai tujuan bersama.' },
         events: [
-          { title: 'Sesi Pembukaan', date: 'Tentukan Tanggal', time: '09:00 - 10:00 WIB', location: 'Ruang Rapat', mapUrl: '#' },
-          { title: 'Diskusi Utama', date: 'Tentukan Tanggal', time: '10:00 - 12:00 WIB', location: 'Ruang Rapat', mapUrl: '#' }
+          { title: 'Sesi Pembukaan', date: 'Tentukan Tanggal', time: '09:00 - 10:00 WIB', location: 'Ruang Rapat', mapUrl: '#', locationImage: '', mapImage: '' },
+          { title: 'Diskusi Utama', date: 'Tentukan Tanggal', time: '10:00 - 12:00 WIB', location: 'Ruang Rapat', mapUrl: '#', locationImage: '', mapImage: '' }
         ]
       },
       event: {
         hero: { title: 'SPECIAL EVENT', description: 'Mari bergabung dan rayakan momen spesial ini bersama kami.' },
         events: [
-          { title: 'Acara Utama', date: 'Tentukan Tanggal', time: '19:00 - Selesai', location: 'Venue Utama', mapUrl: '#' }
+          { title: 'Acara Utama', date: 'Tentukan Tanggal', time: '19:00 - Selesai', location: 'Venue Utama', mapUrl: '#', locationImage: '', mapImage: '' }
         ]
       }
     }
@@ -225,7 +225,7 @@ const AdminPage = () => {
   const addEvent = () => {
     setConfig({
       ...config,
-      events: [...config.events, { title: '', date: '', time: '', location: '', mapUrl: '' }]
+      events: [...config.events, { title: '', date: '', time: '', location: '', mapUrl: '', locationImage: '', mapImage: '' }]
     })
   }
 
@@ -534,6 +534,8 @@ const AdminPage = () => {
                           <input placeholder="Waktu (09:00 - Selesai)" value={event.time} onChange={(e) => updateEvent(idx, 'time', e.target.value)} />
                           <input placeholder="Lokasi" value={event.location} onChange={(e) => updateEvent(idx, 'location', e.target.value)} />
                           <input placeholder="Google Maps URL" value={event.mapUrl} onChange={(e) => updateEvent(idx, 'mapUrl', e.target.value)} />
+                          <input placeholder="URL Foto Lokasi" value={event.locationImage} onChange={(e) => updateEvent(idx, 'locationImage', e.target.value)} />
+                          <input placeholder="URL Foto Peta (Preview)" value={event.mapImage} onChange={(e) => updateEvent(idx, 'mapImage', e.target.value)} />
                         </div>
                       </div>
                     ))}

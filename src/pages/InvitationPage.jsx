@@ -325,33 +325,47 @@ function InvitationPage() {
         }
         .cover-content {
           text-align: center;
-          padding: 40px;
-          border-radius: 20px;
+          padding: 30px 20px;
+          border-radius: 25px;
           background: rgba(255, 255, 255, 0.4);
-          backdrop-filter: blur(8px);
-          max-width: 500px;
-          width: 90%;
+          backdrop-filter: blur(10px);
+          max-width: 450px;
+          width: 85%;
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          box-shadow: 0 20px 50px rgba(0,0,0,0.1);
         }
         .cover-content h4 {
           letter-spacing: 4px;
           color: var(--primary);
-          margin-bottom: 20px;
+          margin-bottom: 15px;
+          font-size: 0.8rem;
         }
         .cover-content h1 {
-          font-size: 3.5rem;
-          margin-bottom: 30px;
+          font-size: 2.8rem;
+          margin-bottom: 25px;
           color: var(--secondary);
+          line-height: 1.1;
         }
         .guest-box {
-          margin-bottom: 40px;
-          padding: 20px;
-          border-top: 1px solid var(--primary-light);
-          border-bottom: 1px solid var(--primary-light);
+          margin-bottom: 30px;
+          padding: 15px;
+          border-top: 1px solid rgba(184, 134, 11, 0.2);
+          border-bottom: 1px solid rgba(184, 134, 11, 0.2);
         }
         .guest-box p {
-          font-size: 0.9rem;
+          font-size: 0.8rem;
           color: var(--text-light);
-          margin-bottom: 10px;
+          margin-bottom: 5px;
+        }
+        .guest-box h3 {
+          font-size: 1.2rem;
+          color: var(--text-dark);
+        }
+        @media (max-width: 480px) {
+          .cover-content h1 { font-size: 2.2rem; }
+          .cover-content { width: 90%; padding: 30px 15px; }
+          .music-control { bottom: 20px; right: 20px; }
+          .cover-music-hint { top: 20px; right: 20px; }
         }
         .music-control {
           position: fixed;

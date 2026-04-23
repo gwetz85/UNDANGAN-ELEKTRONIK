@@ -7,8 +7,10 @@ const Countdown = ({ targetDate }) => {
   })
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      const difference = +new Date(targetDate || '2026-12-31T09:00:00') - +new Date()
+    const calculateTimeLeft = () => {
+      // Robust parsing: handle datetime-local format (T) and potential space-separated format
+      const target = targetDate ? targetDate.replace(' ', 'T') : '2026-12-31T09:00:00'
+      const difference = +new Date(target) - +new Date()
       
       if (difference > 0) {
         setTimeLeft({
@@ -17,8 +19,16 @@ const Countdown = ({ targetDate }) => {
           minutes: Math.floor((difference / 1000 / 60) % 60),
           seconds: Math.floor((difference / 1000) % 60)
         })
+      } else {
+        // Explicitly set to zero if time is up or date is invalid
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 })
       }
-    }, 1000)
+    }
+
+    // Run immediately
+    calculateTimeLeft()
+
+    const timer = setInterval(calculateTimeLeft, 1000)
 
     return () => clearInterval(timer)
   }, [targetDate])
@@ -94,11 +104,21 @@ const Countdown = ({ targetDate }) => {
           color: var(--text-light);
         }
         @media (max-width: 600px) {
+          .countdown-grid { gap: 10px; }
           .countdown-item {
-            width: 80px;
-            height: 80px;
+            width: 75px;
+            height: 75px;
+            border-radius: 12px;
           }
-          .value { font-size: 1.4rem; }
+          .value { font-size: 1.3rem; }
+          .label { font-size: 0.6rem; }
+        }
+        @media (max-width: 360px) {
+          .countdown-item {
+            width: 65px;
+            height: 65px;
+          }
+          .value { font-size: 1.1rem; }
         }
       `}</style>
     </section>
