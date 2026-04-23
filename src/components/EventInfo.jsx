@@ -6,9 +6,9 @@ import { getDirectImageUrl } from '../utils/url'
 const EventInfo = ({ events = [], type = 'wedding' }) => {
   const backgrounds = {
     wedding: bgImage,
-    birthday: 'https://www.transparenttextures.com/patterns/food-patterns.png',
-    meeting: 'https://www.transparenttextures.com/patterns/graphy.png',
-    event: 'https://www.transparenttextures.com/patterns/bright-squares.png'
+    birthday: null,
+    meeting: null,
+    event: null
   }
 
   const currentBg = backgrounds[type] || bgImage
@@ -151,12 +151,13 @@ const EventInfo = ({ events = [], type = 'wedding' }) => {
 
       <style>{`
         .info-section {
-          background-image: url('${currentBg}');
+          ${currentBg ? `background-image: url('${currentBg}');` : ''}
           background-size: initial;
           background-repeat: repeat;
           background-attachment: fixed;
           background-position: center;
           position: relative;
+          background-color: var(--bg-cream);
         }
         .info-section::before {
           content: '';

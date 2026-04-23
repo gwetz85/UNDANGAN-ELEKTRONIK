@@ -35,10 +35,10 @@ const Gift = ({ accounts = [], type = 'wedding' }) => {
   }
 
   const backgrounds = {
-    wedding: 'https://www.transparenttextures.com/patterns/p6.png',
-    birthday: 'https://www.transparenttextures.com/patterns/starring.png',
-    meeting: 'https://www.transparenttextures.com/patterns/subtle-white-feathers.png',
-    event: 'https://www.transparenttextures.com/patterns/black-linen.png'
+    wedding: null,
+    birthday: null,
+    meeting: null,
+    event: null
   }
   const currentBg = backgrounds[type] || backgrounds.wedding
 
@@ -84,7 +84,7 @@ const Gift = ({ accounts = [], type = 'wedding' }) => {
       <style>{`
         .gift-section {
           background-color: var(--bg-cream);
-          background-image: url('${currentBg}');
+          ${currentBg ? `background-image: url('${currentBg}');` : ''}
           background-repeat: repeat;
           background-attachment: fixed;
           position: relative;
