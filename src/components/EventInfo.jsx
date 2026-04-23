@@ -44,7 +44,7 @@ const EventInfo = ({ events = [], type = 'wedding' }) => {
         </div>
 
         <motion.div 
-          className="info-grid"
+          className={`info-grid ${events.length === 1 ? 'single-event' : ''}`}
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 1 }}
@@ -163,6 +163,10 @@ const EventInfo = ({ events = [], type = 'wedding' }) => {
           grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
           gap: 40px;
           justify-content: center;
+        }
+        .info-grid.single-event {
+          max-width: 800px;
+          margin: 0 auto;
         }
         .info-card {
           border-radius: 30px;
