@@ -151,20 +151,11 @@ const EventInfo = ({ events = [], type = 'wedding' }) => {
 
       <style>{`
         .info-section {
-          ${currentBg ? `background-image: url('${currentBg}');` : ''}
-          background-size: initial;
-          background-repeat: repeat;
-          background-attachment: fixed;
-          background-position: center;
+          background-color: transparent !important;
           position: relative;
-          background-color: var(--bg-cream);
         }
         .info-section::before {
-          content: '';
-          position: absolute;
-          top: 0; left: 0; right: 0; bottom: 0;
-          background: rgba(var(--bg-cream-rgb), 0.3);
-          z-index: 0;
+          display: none;
         }
         .container { position: relative; z-index: 1; }
         .info-grid {

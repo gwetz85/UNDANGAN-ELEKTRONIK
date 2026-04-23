@@ -48,7 +48,7 @@ const Gallery = ({ photos = [] }) => {
 
       <style>{`
         .gallery-section {
-          background-color: var(--bg-cream);
+          background-color: transparent !important;
         }
         .section-title {
           font-size: 2.5rem;

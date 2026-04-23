@@ -264,17 +264,25 @@ function InvitationPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1 }}
+          className="main-content-with-bg"
+          style={{ 
+            backgroundImage: `url(${getDirectImageUrl(config.coverImage) || preset.bg})`,
+          }}
         >
-          <MotionSection><Hero data={config.hero} type={eventType} /></MotionSection>
-          <MotionSection><Countdown targetDate={config.weddingDate} /></MotionSection>
-          <MotionSection><EventInfo events={config.events} type={eventType} /></MotionSection>
-          <MotionSection><Notes notes={config.notes} type={eventType} /></MotionSection>
-          <MotionSection><Gallery photos={config.gallery} /></MotionSection>
-          {['wedding', 'birthday'].includes(eventType) && (
-            <MotionSection><Gift accounts={config.bankAccounts} type={eventType} /></MotionSection>
-          )}
-          <MotionSection><RSVP weddingSlug={weddingSlug} type={eventType} /></MotionSection>
-          <MotionSection><Footer names={config.coupleNames} type={eventType} /></MotionSection>
+          <div className="main-overlay"></div>
+          
+          <div className="content-wrapper">
+            <MotionSection><Hero data={config.hero} type={eventType} /></MotionSection>
+            <MotionSection><Countdown targetDate={config.weddingDate} /></MotionSection>
+            <MotionSection><EventInfo events={config.events} type={eventType} /></MotionSection>
+            <MotionSection><Notes notes={config.notes} type={eventType} /></MotionSection>
+            <MotionSection><Gallery photos={config.gallery} /></MotionSection>
+            {['wedding', 'birthday'].includes(eventType) && (
+              <MotionSection><Gift accounts={config.bankAccounts} type={eventType} /></MotionSection>
+            )}
+            <MotionSection><RSVP weddingSlug={weddingSlug} type={eventType} /></MotionSection>
+            <MotionSection><Footer names={config.coupleNames} type={eventType} /></MotionSection>
+          </div>
 
           {!youtubeId && (
             <audio 
@@ -283,9 +291,6 @@ function InvitationPage() {
               loop 
             />
           )}
-
-
-
 
           <div className="music-control">
             <button 
@@ -309,6 +314,27 @@ function InvitationPage() {
         .app-container {
           min-height: 100vh;
           position: relative;
+        }
+        .main-content-with-bg {
+          position: relative;
+          background-size: cover;
+          background-position: center;
+          background-attachment: fixed;
+          background-repeat: no-repeat;
+          min-height: 100vh;
+        }
+        .main-overlay {
+          position: absolute;
+          top: 0; left: 0; right: 0; bottom: 0;
+          background: rgba(253, 251, 247, 0.85); /* Use cream color as overlay */
+          z-index: 0;
+        }
+        [data-theme='modern'] .main-overlay {
+          background: rgba(15, 23, 42, 0.9); /* Dark overlay for modern theme */
+        }
+        .content-wrapper {
+          position: relative;
+          z-index: 1;
         }
         .cover-overlay {
           position: fixed;

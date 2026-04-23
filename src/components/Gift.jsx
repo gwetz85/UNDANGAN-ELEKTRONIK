@@ -83,10 +83,7 @@ const Gift = ({ accounts = [], type = 'wedding' }) => {
 
       <style>{`
         .gift-section {
-          background-color: var(--bg-cream);
-          ${currentBg ? `background-image: url('${currentBg}');` : ''}
-          background-repeat: repeat;
-          background-attachment: fixed;
+          background-color: transparent !important;
           position: relative;
         }
         .container { position: relative; z-index: 1; }

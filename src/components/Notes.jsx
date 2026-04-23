@@ -45,6 +45,7 @@ const Notes = ({ notes = [], type = 'meeting' }) => {
       <style>{`
         .notes-section {
           padding-top: 0 !important;
+          background: transparent !important;
         }
         .notes-container {
           padding: 40px;
