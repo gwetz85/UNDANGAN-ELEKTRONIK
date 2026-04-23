@@ -25,19 +25,11 @@ const Notes = ({ notes = [], type = 'meeting' }) => {
             <h2>{titles[type] || titles.meeting}</h2>
           </div>
           
-          <div className="notes-list">
-            {notes.map((note, index) => (
-              <motion.div 
-                key={index}
-                className="note-item"
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <Info size={18} className="note-icon" />
-                <p>{note}</p>
-              </motion.div>
-            ))}
+          <div className="notes-content">
+            <div className="note-text-wrapper">
+              <Info size={20} className="note-icon" />
+              <p className="note-text">{notes}</p>
+            </div>
           </div>
         </motion.div>
       </div>
@@ -54,12 +46,13 @@ const Notes = ({ notes = [], type = 'meeting' }) => {
           max-width: 800px;
           margin: 0 auto;
           border: 1px solid rgba(184, 134, 11, 0.1);
+          background: white !important; /* Force white background for contrast */
         }
         .notes-header {
           display: flex;
           align-items: center;
           gap: 15px;
-          margin-bottom: 30px;
+          margin-bottom: 25px;
           padding-bottom: 15px;
           border-bottom: 1px solid rgba(184, 134, 11, 0.1);
         }
@@ -71,33 +64,26 @@ const Notes = ({ notes = [], type = 'meeting' }) => {
         .notes-header .icon {
           color: var(--primary);
         }
-        .notes-list {
-          display: flex;
-          flex-direction: column;
-          gap: 20px;
-        }
-        .note-item {
+        .note-text-wrapper {
           display: flex;
           align-items: flex-start;
           gap: 15px;
-          padding: 15px;
+          padding: 20px;
           background: rgba(184, 134, 11, 0.05);
           border-radius: 15px;
-          transition: transform 0.3s ease;
-        }
-        .note-item:hover {
-          transform: translateX(5px);
         }
         .note-icon {
           color: var(--primary);
-          margin-top: 3px;
+          margin-top: 4px;
           flex-shrink: 0;
         }
-        .note-item p {
+        .note-text {
           margin: 0;
-          color: var(--text-dark);
-          line-height: 1.6;
-          font-size: 1rem;
+          color: #2d3748 !important; /* Force dark color for visibility */
+          line-height: 1.8;
+          font-size: 1.05rem;
+          white-space: pre-wrap; /* Preserve line breaks */
+          word-break: break-word;
         }
         @media (max-width: 768px) {
           .notes-container { padding: 25px 20px; }

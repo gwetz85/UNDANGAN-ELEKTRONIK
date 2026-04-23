@@ -137,7 +137,7 @@ const AdminPage = () => {
       weddingDate: new Date().toISOString().split('T')[0] + 'T09:00:00',
       hero: base.hero,
       events: base.events,
-      notes: [],
+      notes: '',
       template: 'classic',
       fontPairing: 'classic',
       animationStyle: 'fade',
@@ -593,10 +593,10 @@ const AdminPage = () => {
                   <div className="form-group">
                     <label>Catatan (Satu catatan per baris)</label>
                     <textarea 
-                      value={config.notes?.join('\n') || ''} 
-                      onChange={(e) => setConfig({...config, notes: e.target.value.split('\n').filter(n => n.trim() !== '')})}
+                      value={config.notes || ''} 
+                      onChange={(e) => setConfig({...config, notes: e.target.value})}
                       placeholder="Masukkan catatan penting di sini..."
-                      rows="5"
+                      rows="8"
                     />
                   </div>
                 </div>
