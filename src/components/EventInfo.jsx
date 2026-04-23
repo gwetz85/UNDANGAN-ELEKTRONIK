@@ -71,77 +71,74 @@ const EventInfo = ({ events = [], type = 'wedding' }) => {
                     <h3>{event.title}</h3>
                   </div>
                   
-                  <div className="card-content">
-                    <div className="info-item">
-                      <Calendar size={20} className="icon" />
-                      <div className="item-text">
-                        <label>Hari / Tanggal</label>
-                        <span className="value">{event.date}</span>
-                      </div>
-                    </div>
-                    <div className="info-item">
-                      <Clock size={20} className="icon" />
-                      <div className="item-text">
-                        <label>Jam</label>
-                        <span className="value">{event.time}</span>
-                      </div>
-                    </div>
-                    {event.agenda && (
+                  <div className="card-body-inner">
+                    <div className="card-content">
                       <div className="info-item">
-                        <ListChecks size={20} className="icon" />
+                        <Calendar size={20} className="icon" />
                         <div className="item-text">
-                          <label>Agenda</label>
-                          <span className="value">{event.agenda}</span>
+                          <label>Hari / Tanggal</label>
+                          <span className="value">{event.date}</span>
                         </div>
                       </div>
+                      <div className="info-item">
+                        <Clock size={20} className="icon" />
+                        <div className="item-text">
+                          <label>Jam</label>
+                          <span className="value">{event.time}</span>
+                        </div>
+                      </div>
+                      {event.agenda && (
+                        <div className="info-item">
+                          <ListChecks size={20} className="icon" />
+                          <div className="item-text">
+                            <label>Agenda</label>
+                            <span className="value">{event.agenda}</span>
+                          </div>
+                        </div>
+                      )}
+                      <div className="info-item">
+                        <MapPin size={20} className="icon" />
+                        <div className="item-text">
+                          <label>Lokasi</label>
+                          <span className="value">{event.location}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {(embedUrl || event.mapImage || (event.mapUrl && event.mapUrl !== '#')) && (
+                      <div className="card-map-section">
+                        {embedUrl ? (
+                          <div className="map-iframe-container">
+                            <iframe 
+                              src={embedUrl}
+                              width="100%" 
+                              height="100%" 
+                              style={{ border: 0, borderRadius: '15px', minHeight: '200px' }} 
+                              allowFullScreen="" 
+                              loading="lazy" 
+                              referrerPolicy="no-referrer-when-downgrade"
+                            ></iframe>
+                          </div>
+                        ) : event.mapImage ? (
+                          <div className="map-preview" onClick={() => window.open(event.mapUrl, '_blank')}>
+                            <img src={getDirectImageUrl(event.mapImage)} alt="Map Preview" />
+                            <div className="map-overlay">
+                              <ExternalLink size={24} />
+                              <span>Buka Peta</span>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="map-preview fallback" onClick={() => window.open(event.mapUrl, '_blank')}>
+                            <MapPin size={40} className="fallback-icon" />
+                            <div className="map-overlay">
+                              <ExternalLink size={24} />
+                              <span>Buka Peta</span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     )}
-                    <div className="info-item">
-                      <MapPin size={20} className="icon" />
-                      <div className="item-text">
-                        <label>Lokasi</label>
-                        <span className="value">{event.location}</span>
-                      </div>
-                    </div>
                   </div>
-
-                  {embedUrl ? (
-                    <div className="map-iframe-container">
-                      <iframe 
-                        src={embedUrl}
-                        width="100%" 
-                        height="200" 
-                        style={{ border: 0, borderRadius: '15px' }} 
-                        allowFullScreen="" 
-                        loading="lazy" 
-                        referrerPolicy="no-referrer-when-downgrade"
-                      ></iframe>
-                    </div>
-                  ) : event.mapImage ? (
-                    <div className="map-preview" onClick={() => window.open(event.mapUrl, '_blank')}>
-                      <img src={getDirectImageUrl(event.mapImage)} alt="Map Preview" />
-                      <div className="map-overlay">
-                        <ExternalLink size={24} />
-                        <span>Buka Peta</span>
-                      </div>
-                    </div>
-                  ) : event.mapUrl && event.mapUrl !== '#' && (
-                    <div className="map-link-box">
-                      <p>Lihat peta lokasi di Google Maps:</p>
-                      <button 
-                        className="btn-premium small"
-                        onClick={() => window.open(event.mapUrl, '_blank')}
-                      >
-                        <ExternalLink size={16} /> Buka Google Maps
-                      </button>
-                    </div>
-                  )}
-
-                  <button 
-                    className="btn-premium"
-                    onClick={() => window.open(event.mapUrl, '_blank')}
-                  >
-                    <MapPin size={18} /> Petunjuk Lokasi
-                  </button>
                 </div>
               </motion.div>
             )
@@ -207,6 +204,17 @@ const EventInfo = ({ events = [], type = 'wedding' }) => {
           color: var(--primary);
           margin-bottom: 0;
         }
+        .card-body-inner {
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+        }
+        .info-grid.single-event .card-body-inner {
+          display: grid;
+          grid-template-columns: 1.5fr 1fr;
+          gap: 30px;
+          align-items: stretch;
+        }
         .card-content {
           display: flex;
           flex-direction: column;
@@ -239,24 +247,46 @@ const EventInfo = ({ events = [], type = 'wedding' }) => {
           margin-top: 2px;
           flex-shrink: 0;
         }
+        .card-map-section {
+          display: flex;
+          flex-direction: column;
+          height: 100%;
+        }
         .map-iframe-container {
-          margin-top: 10px;
+          flex: 1;
           border-radius: 15px;
           overflow: hidden;
           box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+          height: 100%;
+          min-height: 200px;
+        }
+        .map-iframe-container iframe {
+          height: 100%;
+          min-height: 200px;
         }
         .map-preview {
           position: relative;
-          height: 150px;
           border-radius: 15px;
           overflow: hidden;
           cursor: pointer;
-          margin-top: 10px;
+          height: 100%;
+          min-height: 200px;
+          flex: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(184, 134, 11, 0.05);
         }
         .map-preview img {
           width: 100%;
           height: 100%;
           object-fit: cover;
+          position: absolute;
+          top: 0; left: 0;
+        }
+        .map-preview.fallback .fallback-icon {
+          color: var(--primary);
+          opacity: 0.5;
         }
         .map-overlay {
           position: absolute;
@@ -270,6 +300,7 @@ const EventInfo = ({ events = [], type = 'wedding' }) => {
           opacity: 0;
           transition: opacity 0.3s;
           backdrop-filter: blur(2px);
+          z-index: 2;
         }
         .map-preview:hover .map-overlay {
           opacity: 1;
@@ -279,14 +310,6 @@ const EventInfo = ({ events = [], type = 'wedding' }) => {
           font-weight: 600;
           margin-top: 5px;
         }
-        .map-link-box {
-          padding: 15px;
-          background: #f7fafc;
-          border-radius: 15px;
-          text-align: center;
-          font-size: 0.85rem;
-        }
-        .map-link-box p { margin-bottom: 10px; color: #4a5568; }
         .btn-premium {
           display: flex;
           align-items: center;
@@ -302,6 +325,12 @@ const EventInfo = ({ events = [], type = 'wedding' }) => {
           .info-grid { gap: 20px; }
           .card-body { padding: 25px 15px; }
           .card-header h3 { font-size: 1.6rem; }
+          .info-grid.single-event .card-body-inner {
+            grid-template-columns: 1fr;
+          }
+          .map-preview, .map-iframe-container iframe {
+            min-height: 150px;
+          }
         }
       `}</style>
     </section>
